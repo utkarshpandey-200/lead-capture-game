@@ -242,6 +242,22 @@ describe("admin players", () => {
     expect(emails).not.toContain("admin-fixture-test@example.com");
     expect(emails).toContain("admin-fixture-real@example.com");
   });
+
+  it("still shows test-flagged players on the public leaderboard (needed for seed:demo / rehearsal) but excludes them from the CSV lead list", async () => {
+    await registerAndFinishAttempt("admin-fixture-visible-test@example.com", true);
+
+    const board = await app.inject({ method: "GET", url: "/api/leaderboard/top?board=overall" });
+    expect(
+      board.json().entries.some((e: { displayName: string }) => e.displayName === "Admin")
+    ).toBe(true);
+
+    const csv = await app.inject({
+      method: "GET",
+      url: "/api/admin/export.csv",
+      cookies: { admin_session: adminCookie },
+    });
+    expect(csv.body).not.toContain("admin-fixture-visible-test@example.com");
+  });
 });
 
 describe("admin CSV export", () => {

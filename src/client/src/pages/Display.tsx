@@ -68,7 +68,7 @@ export default function Display(): JSX.Element {
             <p className="display-cta">{cfg.copy.boothCta}</p>
           </div>
           <div className="display-player-count">
-            {daily.data ? `${daily.data.playerCount} players today` : " "}
+            {daily.data ? `${daily.data.playerCount} ${daily.data.playerCount === 1 ? "player" : "players"} today` : " "}
           </div>
         </div>
       </div>

@@ -80,14 +80,23 @@ export interface LeaderboardRow {
   finishedAt: string;
 }
 
-/** Best non-practice, finished attempt per eligible (non-hidden, non-test) player, optionally scoped to one event day. */
+/**
+ * Best non-practice, finished attempt per eligible (non-hidden) player,
+ * optionally scoped to one event day.
+ *
+ * Deliberately does NOT filter out is_test players: test data is meant to
+ * behave like real play for rehearsal and for `npm run seed:demo` (so the
+ * display and ranking can be checked visually before the event), and is
+ * only cleaned up in bulk via the admin "wipe test data" action. is_test
+ * only affects the CSV lead export, which excludes it.
+ */
 export function getLeaderboardAttempts(eventDay?: string): LeaderboardRow[] {
   const rows = db
     .prepare(
       `SELECT a.player_id AS playerId, a.total_score AS score, a.total_elapsed_ms AS elapsedMs, a.finished_at AS finishedAt
        FROM attempts a
        JOIN players p ON p.id = a.player_id
-       WHERE a.status = 'finished' AND a.is_practice = 0 AND p.hidden = 0 AND p.is_test = 0
+       WHERE a.status = 'finished' AND a.is_practice = 0 AND p.hidden = 0
        ${eventDay ? "AND a.event_day = ?" : ""}`
     )
     .all(...(eventDay ? [eventDay] : [])) as LeaderboardRow[];

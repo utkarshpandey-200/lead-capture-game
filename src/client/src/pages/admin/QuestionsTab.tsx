@@ -88,6 +88,7 @@ export default function QuestionsTab(): JSX.Element {
       {loading ? (
         <p>Loading…</p>
       ) : (
+        <div className="admin-table-wrap">
         <table className="admin-table">
           <thead>
             <tr>
@@ -120,6 +121,7 @@ export default function QuestionsTab(): JSX.Element {
             ))}
           </tbody>
         </table>
+        </div>
       )}
     </div>
   );

@@ -526,6 +526,8 @@ a {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
   margin-bottom: clamp(24px, 2vw, 40px);
 }
 
@@ -717,6 +719,31 @@ a {
   }
 }
 
+@media (max-width: 640px) {
+  .display-page {
+    padding: 16px;
+  }
+
+  .display-brand {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .display-brand h1 {
+    font-size: 1.3rem;
+  }
+
+  .display-board-label {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .leaderboard-row {
+    grid-template-columns: 36px 1fr auto;
+    gap: 10px;
+  }
+}
+
 /* --- Admin --- */
 
 .admin-login-screen {
@@ -806,13 +833,18 @@ a {
   font-size: 0.9rem;
 }
 
+.admin-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-border);
+}
+
 .admin-table {
   width: 100%;
+  min-width: 720px;
   border-collapse: collapse;
   background: var(--color-surface);
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-md);
-  overflow: hidden;
   font-size: 0.9rem;
 }
 

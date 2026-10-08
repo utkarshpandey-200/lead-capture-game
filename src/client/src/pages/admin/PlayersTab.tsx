@@ -109,6 +109,7 @@ export default function PlayersTab(): JSX.Element {
       {loading && players.length === 0 ? (
         <p>Loading…</p>
       ) : (
+        <div className="admin-table-wrap">
         <table className="admin-table">
           <thead>
             <tr>
@@ -161,6 +162,7 @@ export default function PlayersTab(): JSX.Element {
             )}
           </tbody>
         </table>
+        </div>
       )}
     </div>
   );

@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev:server": "tsx watch src/server/index.ts",
     "dev:client": "vite",
@@ -15,6 +18,8 @@
     "seed:questions": "tsx scripts/seed-questions.ts",
     "seed:demo": "tsx scripts/seed-demo.ts",
     "wipe:test-data": "tsx scripts/wipe-test-data.ts",
+    "purge:all-data": "tsx scripts/purge-all-data.ts",
+    "backup:db": "tsx scripts/backup-db.ts",
     "screenshots": "tsx scripts/screenshots.ts"
   },
   "dependencies": {
