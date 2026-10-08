@@ -3,6 +3,7 @@ import {
   rankEntries,
   computeTopPercent,
   getStanding,
+  pickBestPerPlayer,
   type LeaderboardCandidate,
 } from "../../src/shared/ranking";
 
@@ -67,6 +68,24 @@ describe("rankEntries", () => {
       c("c", 100, 100, "t1"),
     ]);
     expect(ranked.map((e) => e.rank)).toEqual([1, 2, 3]);
+  });
+});
+
+describe("pickBestPerPlayer", () => {
+  it("keeps only the best attempt per player using the standard tiebreak order", () => {
+    const best = pickBestPerPlayer([
+      c("p1", 3000, 5000, "t1"),
+      c("p1", 4000, 5000, "t2"),
+      c("p1", 4000, 3000, "t3"),
+      c("p2", 2000, 5000, "t1"),
+    ]);
+    expect(best).toHaveLength(2);
+    const p1 = best.find((e) => e.playerId === "p1");
+    expect(p1).toEqual(c("p1", 4000, 3000, "t3"));
+  });
+
+  it("returns an empty array for no candidates", () => {
+    expect(pickBestPerPlayer([])).toEqual([]);
   });
 });
 

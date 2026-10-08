@@ -12,17 +12,23 @@ export interface RankedEntry extends LeaderboardCandidate {
 }
 
 /**
- * Sorts candidates by: score desc, elapsedMs asc, finishedAt asc (earliest
- * wins), playerId asc as a final deterministic tiebreak. Ranks are assigned
- * 1..N by sorted position — no shared ranks, per "ranks are deterministic".
+ * score desc, elapsedMs asc, finishedAt asc (earliest wins), playerId asc
+ * as a final deterministic tiebreak. Exported so callers (e.g. "pick this
+ * player's best attempt across several") can reuse the exact same order.
+ */
+export function compareCandidates(a: LeaderboardCandidate, b: LeaderboardCandidate): number {
+  if (b.score !== a.score) return b.score - a.score;
+  if (a.elapsedMs !== b.elapsedMs) return a.elapsedMs - b.elapsedMs;
+  if (a.finishedAt !== b.finishedAt) return a.finishedAt < b.finishedAt ? -1 : 1;
+  return a.playerId < b.playerId ? -1 : a.playerId > b.playerId ? 1 : 0;
+}
+
+/**
+ * Ranks are assigned 1..N by sorted position — no shared ranks, per
+ * "ranks are deterministic".
  */
 export function rankEntries(candidates: LeaderboardCandidate[]): RankedEntry[] {
-  const sorted = [...candidates].sort((a, b) => {
-    if (b.score !== a.score) return b.score - a.score;
-    if (a.elapsedMs !== b.elapsedMs) return a.elapsedMs - b.elapsedMs;
-    if (a.finishedAt !== b.finishedAt) return a.finishedAt < b.finishedAt ? -1 : 1;
-    return a.playerId < b.playerId ? -1 : a.playerId > b.playerId ? 1 : 0;
-  });
+  const sorted = [...candidates].sort(compareCandidates);
   return sorted.map((entry, i) => ({ ...entry, rank: i + 1 }));
 }
 
@@ -37,6 +43,18 @@ export interface Standing {
   totalPlayers: number;
   topPercent: number;
   pointGapToFifth: number | null;
+}
+
+/** Reduces several attempts per player down to each player's single best, using the same tiebreak order as rankEntries. */
+export function pickBestPerPlayer(candidates: LeaderboardCandidate[]): LeaderboardCandidate[] {
+  const bestByPlayer = new Map<string, LeaderboardCandidate>();
+  for (const candidate of candidates) {
+    const existing = bestByPlayer.get(candidate.playerId);
+    if (!existing || compareCandidates(candidate, existing) < 0) {
+      bestByPlayer.set(candidate.playerId, candidate);
+    }
+  }
+  return [...bestByPlayer.values()];
 }
 
 export function getStanding(ranked: RankedEntry[], playerId: string): Standing | null {
