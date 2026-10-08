@@ -502,6 +502,221 @@ a {
   text-align: center;
 }
 
+/* --- Display screen (booth monitor, dark, always-on) --- */
+
+.display-page {
+  --display-bg: #0b0f14;
+  --display-surface: #151c24;
+  --display-border: #2a3540;
+  --display-text: #f5f7f9;
+  --display-text-muted: #93a3b1;
+
+  min-height: 100vh;
+  width: 100%;
+  background: var(--display-bg);
+  color: var(--display-text);
+  font-family: var(--font-sans);
+  display: flex;
+  flex-direction: column;
+  padding: clamp(24px, 2.5vw, 56px);
+  box-sizing: border-box;
+}
+
+.display-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: clamp(24px, 2vw, 40px);
+}
+
+.display-brand {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.display-brand img {
+  height: clamp(40px, 3vw, 64px);
+  width: auto;
+  filter: brightness(0) invert(1);
+}
+
+.display-brand h1 {
+  font-size: clamp(1.6rem, 2.2vw, 2.4rem);
+  font-weight: 800;
+  margin: 0;
+}
+
+.display-board-label {
+  display: flex;
+  gap: 12px;
+}
+
+.board-pill {
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 2px solid var(--display-border);
+  font-weight: 700;
+  font-size: clamp(0.9rem, 1vw, 1.1rem);
+  color: var(--display-text-muted);
+  transition: background var(--transition-med), color var(--transition-med), border-color var(--transition-med);
+}
+
+.board-pill.active {
+  background: var(--brand-secondary);
+  border-color: var(--brand-secondary);
+  color: #1a1400;
+}
+
+.display-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: clamp(24px, 3vw, 56px);
+  min-height: 0;
+}
+
+.display-leaderboard {
+  background: var(--display-surface);
+  border: 1px solid var(--display-border);
+  border-radius: 24px;
+  padding: clamp(16px, 2vw, 32px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.leaderboard-rows {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.4vw, 20px);
+}
+
+.leaderboard-row {
+  display: grid;
+  grid-template-columns: clamp(64px, 5vw, 96px) 1fr auto;
+  align-items: center;
+  gap: clamp(16px, 2vw, 32px);
+  padding: clamp(14px, 1.6vw, 24px) clamp(16px, 2vw, 28px);
+  background: var(--display-bg);
+  border-radius: 16px;
+  border: 1px solid var(--display-border);
+}
+
+.row-rank {
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  font-weight: 900;
+  color: var(--brand-secondary);
+  text-align: center;
+}
+
+.row-name {
+  font-size: clamp(1.3rem, 2.3vw, 2.2rem);
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row-org {
+  color: var(--display-text-muted);
+  font-weight: 500;
+}
+
+.row-score {
+  font-size: clamp(1.4rem, 2.4vw, 2.3rem);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.row-entered {
+  animation: row-flash 2.2s ease;
+}
+
+@keyframes row-flash {
+  0% {
+    background: color-mix(in srgb, var(--brand-secondary) 55%, var(--display-bg));
+    border-color: var(--brand-secondary);
+  }
+  100% {
+    background: var(--display-bg);
+    border-color: var(--display-border);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row-entered {
+    animation: none;
+  }
+}
+
+.display-empty {
+  text-align: center;
+  font-size: 1.6rem;
+  color: var(--display-text-muted);
+  padding: 48px;
+}
+
+.display-side {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.display-qr-card {
+  background: var(--display-surface);
+  border: 1px solid var(--display-border);
+  border-radius: 24px;
+  padding: clamp(20px, 2vw, 32px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.display-qr-card svg {
+  border-radius: 12px;
+  background: #fff;
+  padding: 12px;
+}
+
+.display-cta {
+  font-size: clamp(1rem, 1.3vw, 1.3rem);
+  font-weight: 700;
+  margin: 0;
+}
+
+.display-player-count {
+  text-align: center;
+  font-size: clamp(1rem, 1.2vw, 1.3rem);
+  font-weight: 700;
+  color: var(--display-text-muted);
+  background: var(--display-surface);
+  border: 1px solid var(--display-border);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.display-footer {
+  min-height: 24px;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.display-offline-badge {
+  color: var(--brand-secondary);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 900px) {
+  .display-body {
+    grid-template-columns: 1fr;
+  }
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
