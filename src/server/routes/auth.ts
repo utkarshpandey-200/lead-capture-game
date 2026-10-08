@@ -2,7 +2,7 @@ import type { FastifyInstance } from "fastify";
 import { config } from "../../shared/config.js";
 import { registerSchema } from "../lib/validation.js";
 import { registerOrResume, getAttemptsRemaining } from "../lib/registerService.js";
-import { setPlayerSession, getPlayerIdFromRequest } from "../lib/session.js";
+import { setPlayerSession, getPlayerIdFromRequest, PLAYER_COOKIE } from "../lib/session.js";
 import { getPlayerById } from "../db/players.js";
 
 export async function authRoutes(app: FastifyInstance): Promise<void> {
@@ -70,5 +70,12 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
       attemptsRemaining: getAttemptsRemaining(player.id),
       maxAttempts: config.quiz.maxAttempts,
     });
+  });
+
+  // Used by kiosk mode to drop the session between players on a shared booth tablet.
+  // Clears the cookie only; the player's stored data and scores are untouched.
+  app.post("/api/logout", async (_req, reply) => {
+    reply.clearCookie(PLAYER_COOKIE, { path: "/" });
+    reply.send({ ok: true });
   });
 }

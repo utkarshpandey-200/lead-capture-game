@@ -1,7 +1,7 @@
 import { config } from "../../shared/config.js";
 import { computePoints } from "../../shared/scoring.js";
 import { resolveElapsedMs } from "../../shared/timing.js";
-import type { AttemptResult } from "../../shared/types.js";
+import type { AttemptResult, AnswerOutcome, QuestionForClient } from "../../shared/types.js";
 import {
   createAttempt,
   finalizeAttempt,
@@ -125,20 +125,6 @@ export function startAttempt(playerId: string, practice: boolean): AttemptRow {
   return attempt;
 }
 
-export interface QuestionForClient {
-  attemptId: string;
-  position: number;
-  totalQuestions: number;
-  questionId: string;
-  category: string;
-  type: "knowledge" | "scenario";
-  prompt: string;
-  options: string[];
-  remainingMs: number;
-  servedAt: string;
-  scoreSoFar: number;
-}
-
 function buildQuestionForClient(attempt: AttemptRow, aq: AttemptQuestionRow): QuestionForClient {
   const question = getQuestionById(aq.question_id);
   if (!question) throw new NotFoundError("Question");
@@ -185,18 +171,6 @@ export interface AnswerInput {
   questionId: string;
   chosenOption: number | null;
   clientElapsedMs: number | null | undefined;
-}
-
-export interface AnswerOutcome {
-  correct: boolean;
-  correctOptionDisplayIndex: number;
-  explanation: string;
-  reference: string;
-  pointsEarned: number;
-  scoreSoFar: number;
-  isLastQuestion: boolean;
-  nextPosition: number | null;
-  result: AttemptResult | null;
 }
 
 export function submitAnswer(attemptId: string, playerId: string, input: AnswerInput): AnswerOutcome {

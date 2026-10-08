@@ -150,6 +150,7 @@ export function getPublicConfig() {
       feedbackDwellMs: config.quiz.feedbackDwellMs,
     },
     display: config.display,
+    nicknameBlocklist: config.nicknameBlocklist,
   };
 }
 
