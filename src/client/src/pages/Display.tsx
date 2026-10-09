@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
 import { useClientConfig } from "../config/ClientConfigContext";
@@ -10,22 +10,14 @@ type Board = "overall" | "daily";
 export default function Display(): JSX.Element {
   const cfg = useClientConfig();
   const [searchParams] = useSearchParams();
-  const lockedParam = searchParams.get("board");
-  const locked: Board | null = lockedParam === "daily" || lockedParam === "overall" ? lockedParam : null;
+  const boardParam = searchParams.get("board");
+  const initialBoard: Board = boardParam === "overall" ? "overall" : "daily";
 
   const overall = usePolledLeaderboard("overall", cfg.display.pollIntervalMs);
   const daily = usePolledLeaderboard("daily", cfg.display.pollIntervalMs);
 
-  const [autoBoard, setAutoBoard] = useState<Board>("daily");
-  useEffect(() => {
-    if (locked) return;
-    const id = setInterval(() => {
-      setAutoBoard((b) => (b === "overall" ? "daily" : "overall"));
-    }, cfg.display.boardRotateMs);
-    return () => clearInterval(id);
-  }, [locked, cfg.display.boardRotateMs]);
-
-  const activeBoard = locked ?? autoBoard;
+  // Manual, click-to-switch — no auto-rotation. ?board=daily|overall just sets which one shows first.
+  const [activeBoard, setActiveBoard] = useState<Board>(initialBoard);
   const activeResult = activeBoard === "overall" ? overall : daily;
   const active = activeResult.data;
   const anyStale = overall.stale || daily.stale;
@@ -39,9 +31,25 @@ export default function Display(): JSX.Element {
           <img src={cfg.brand.logoPath} alt={cfg.brand.name} />
           <h1>{cfg.copy.quizTitle}</h1>
         </div>
-        <div className="display-board-label">
-          <span className={`board-pill${activeBoard === "daily" ? " active" : ""}`}>Today</span>
-          <span className={`board-pill${activeBoard === "overall" ? " active" : ""}`}>Overall</span>
+        <div className="display-board-label" role="tablist" aria-label="Leaderboard">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeBoard === "daily"}
+            className={`board-pill${activeBoard === "daily" ? " active" : ""}`}
+            onClick={() => setActiveBoard("daily")}
+          >
+            Today
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeBoard === "overall"}
+            className={`board-pill${activeBoard === "overall" ? " active" : ""}`}
+            onClick={() => setActiveBoard("overall")}
+          >
+            Overall
+          </button>
         </div>
       </div>
 

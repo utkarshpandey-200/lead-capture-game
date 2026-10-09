@@ -555,6 +555,10 @@ a {
 }
 
 .board-pill {
+  appearance: none;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
   padding: 10px 22px;
   border-radius: 999px;
   border: 2px solid var(--display-border);
@@ -562,6 +566,16 @@ a {
   font-size: clamp(0.9rem, 1vw, 1.1rem);
   color: var(--display-text-muted);
   transition: background var(--transition-med), color var(--transition-med), border-color var(--transition-med);
+}
+
+.board-pill:hover {
+  border-color: var(--brand-secondary);
+  color: var(--display-text);
+}
+
+.board-pill:focus-visible {
+  outline: 3px solid var(--brand-secondary);
+  outline-offset: 2px;
 }
 
 .board-pill.active {

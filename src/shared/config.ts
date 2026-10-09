@@ -83,7 +83,6 @@ export const config = {
 
   // Display screen
   display: {
-    boardRotateMs: envInt("DISPLAY_ROTATE_MS", 10000),
     pollIntervalMs: envInt("DISPLAY_POLL_INTERVAL_MS", 3000),
     topN: envInt("DISPLAY_TOP_N", 5),
   },
