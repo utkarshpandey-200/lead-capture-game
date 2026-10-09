@@ -1,4 +1,5 @@
 import type { FastifyInstance } from "fastify";
+import { config } from "../../shared/config.js";
 import { startAttemptSchema, submitAnswerSchema } from "../lib/validation.js";
 import { requirePlayerId } from "../lib/requirePlayer.js";
 import {
@@ -40,7 +41,7 @@ export async function attemptRoutes(app: FastifyInstance): Promise<void> {
     "/api/attempts/:attemptId/answer",
     {
       config: {
-        rateLimit: { max: 60, timeWindow: "1 minute" },
+        rateLimit: { max: config.rateLimits.answerMax, timeWindow: "1 minute" },
       },
     },
     async (req, reply) => {

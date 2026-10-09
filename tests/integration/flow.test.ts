@@ -22,14 +22,17 @@ beforeAll(async () => {
   app = await buildApp({ logger: false, serveClient: false });
 });
 
-async function registerPlayer(email: string) {
+async function registerPlayer(
+  email: string,
+  overrides: { firstName?: string; organization?: string } = {}
+) {
   const res = await app.inject({
     method: "POST",
     url: "/api/register",
     payload: {
-      firstName: "Integration",
+      firstName: overrides.firstName ?? "Integration",
       lastName: "Tester",
-      organization: "Test Credit Union",
+      organization: overrides.organization ?? "Test Credit Union",
       email,
       consent: true,
       displayMode: "first_org",
@@ -70,6 +73,38 @@ async function answerCurrentCorrectly(pid: string, attemptId: string) {
   });
   expect(answerRes.statusCode).toBe(200);
   return answerRes.json();
+}
+
+/** Plays all 5 questions of an attempt, answering the first `numCorrect` correctly (max points) and the rest wrong (0 points), to get a deterministic, controllable score. */
+async function playAttemptWithScore(pid: string, attemptId: string, numCorrect: number) {
+  for (let i = 0; i < 5; i++) {
+    const qRes = await app.inject({
+      method: "GET",
+      url: `/api/attempts/${attemptId}/question`,
+      cookies: { pid },
+    });
+    const question = qRes.json();
+
+    const aqRows = getAttemptQuestions(attemptId);
+    const aq = aqRows.find((r: { position: number }) => r.position === question.position)!;
+    const shuffled: number[] = JSON.parse(aq.shuffled_options);
+    const dbQuestion = getQuestionById(question.questionId)!;
+    const correctDisplayIndex = shuffled.indexOf(dbQuestion.correctIndex);
+    const wrongDisplayIndex = (correctDisplayIndex + 1) % 4;
+
+    const answerRes = await app.inject({
+      method: "POST",
+      url: `/api/attempts/${attemptId}/answer`,
+      cookies: { pid },
+      payload: {
+        position: question.position,
+        questionId: question.questionId,
+        chosenOption: i < numCorrect ? correctDisplayIndex : wrongDisplayIndex,
+        clientElapsedMs: 0,
+      },
+    });
+    if (i === 4) return answerRes.json();
+  }
 }
 
 describe("full player flow", () => {
@@ -252,5 +287,61 @@ describe("full player flow", () => {
       },
     });
     expect(res.statusCode).toBe(400);
+  });
+});
+
+describe("leaderboard grouping by display identity", () => {
+  it("collapses two different players with the same displayed name+org into one leaderboard row, keeping the best score, while each player's own standing still resolves correctly", async () => {
+    const { pid: pidLow } = await registerPlayer("same-name-low@example.com", {
+      firstName: "Riley",
+      organization: "Shared CU",
+    });
+    const startLow = await app.inject({
+      method: "POST",
+      url: "/api/attempts/start",
+      cookies: { pid: pidLow },
+      payload: {},
+    });
+    const lowOutcome = await playAttemptWithScore(pidLow, startLow.json().attemptId, 2);
+
+    const { pid: pidHigh } = await registerPlayer("same-name-high@example.com", {
+      firstName: "Riley",
+      organization: "Shared CU",
+    });
+    const startHigh = await app.inject({
+      method: "POST",
+      url: "/api/attempts/start",
+      cookies: { pid: pidHigh },
+      payload: {},
+    });
+    const highOutcome = await playAttemptWithScore(pidHigh, startHigh.json().attemptId, 5);
+
+    expect(highOutcome.result.totalScore).toBeGreaterThan(lowOutcome.result.totalScore);
+
+    // Public board: one row for "Riley · Shared CU", at the higher score.
+    const board = await app.inject({ method: "GET", url: "/api/leaderboard/top?board=overall" });
+    const rileyRows = board
+      .json()
+      .entries.filter((e: { displayName: string; organization: string }) => e.displayName === "Riley" && e.organization === "Shared CU");
+    expect(rileyRows).toHaveLength(1);
+    expect(rileyRows[0].score).toBe(highOutcome.result.totalScore);
+
+    // Both players' own standing resolves to the shared group's rank — including the
+    // lower scorer, whose own raw attempt did NOT win the group. Re-fetch both fresh
+    // (rather than comparing the finish-time snapshots, which were taken at different
+    // points — the low player finished before the high player even registered) so
+    // this is an apples-to-apples comparison of current state.
+    const lowResultNow = await app.inject({
+      method: "GET",
+      url: `/api/attempts/${startLow.json().attemptId}/result`,
+      cookies: { pid: pidLow },
+    });
+    const highResultNow = await app.inject({
+      method: "GET",
+      url: `/api/attempts/${startHigh.json().attemptId}/result`,
+      cookies: { pid: pidHigh },
+    });
+    expect(lowResultNow.json().overall.rank).toBe(highResultNow.json().overall.rank);
+    expect(lowResultNow.json().overall.rank).toBeGreaterThan(0);
   });
 });

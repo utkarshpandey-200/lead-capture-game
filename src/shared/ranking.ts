@@ -1,5 +1,12 @@
 export interface LeaderboardCandidate {
   playerId: string;
+  /**
+   * Identity used to decide "is this the same leaderboard entry" (grouping
+   * in pickBestPerPlayer, lookup in getStanding). Defaults to playerId when
+   * omitted, so callers that don't care about an alternate grouping (e.g.
+   * grouping by displayed name instead of raw player id) are unaffected.
+   */
+  groupKey?: string;
   score: number;
   /** Total elapsed time across the attempt's questions; timeouts count as the full limit. */
   elapsedMs: number;
@@ -45,20 +52,22 @@ export interface Standing {
   pointGapToFifth: number | null;
 }
 
-/** Reduces several attempts per player down to each player's single best, using the same tiebreak order as rankEntries. */
+/** Reduces several attempts down to one best per groupKey (or playerId if groupKey is omitted), using the same tiebreak order as rankEntries. */
 export function pickBestPerPlayer(candidates: LeaderboardCandidate[]): LeaderboardCandidate[] {
-  const bestByPlayer = new Map<string, LeaderboardCandidate>();
+  const bestByKey = new Map<string, LeaderboardCandidate>();
   for (const candidate of candidates) {
-    const existing = bestByPlayer.get(candidate.playerId);
+    const key = candidate.groupKey ?? candidate.playerId;
+    const existing = bestByKey.get(key);
     if (!existing || compareCandidates(candidate, existing) < 0) {
-      bestByPlayer.set(candidate.playerId, candidate);
+      bestByKey.set(key, candidate);
     }
   }
-  return [...bestByPlayer.values()];
+  return [...bestByKey.values()];
 }
 
-export function getStanding(ranked: RankedEntry[], playerId: string): Standing | null {
-  const me = ranked.find((e) => e.playerId === playerId);
+/** `lookupKey` should match whatever each candidate's groupKey (or playerId, if ungrouped) is. */
+export function getStanding(ranked: RankedEntry[], lookupKey: string): Standing | null {
+  const me = ranked.find((e) => (e.groupKey ?? e.playerId) === lookupKey);
   if (!me) return null;
   const totalPlayers = ranked.length;
   const topPercent = computeTopPercent(me.rank, totalPlayers);

@@ -110,6 +110,16 @@ export const config = {
     trustProxy: envBool("TRUST_PROXY", true),
   },
 
+  // Rate limits (requests per 1-minute window). Defaults are sized for booth
+  // abuse-prevention; raised in the test env (see vitest.config.ts) so the
+  // test suite's own request volume never trips production-sized limits.
+  rateLimits: {
+    globalMax: envInt("RATE_LIMIT_GLOBAL_MAX", 120),
+    registerMax: envInt("RATE_LIMIT_REGISTER_MAX", 8),
+    answerMax: envInt("RATE_LIMIT_ANSWER_MAX", 60),
+    adminLoginMax: envInt("RATE_LIMIT_ADMIN_LOGIN_MAX", 10),
+  },
+
   // Profanity blocklist for nicknames (kept short and conservative on purpose)
   nicknameBlocklist: [
     "fuck",

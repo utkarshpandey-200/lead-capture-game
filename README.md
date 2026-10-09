@@ -107,6 +107,10 @@ To approve questions: log into `/admin` → Questions, review each one, and togg
 
 The CSV export (`GET /api/admin/export.csv`, or the "Export CSV" button) includes name, organization, email, consent flag and timestamp, best score, overall rank, today's rank, attempts, and first/last played — excluding anyone flagged as test data. Run it at the end of each day for the lead list.
 
+### Leaderboard grouping
+
+Rows on `/display` and the public leaderboard are grouped by **displayed identity** (the shown name + organization), not by the underlying player record. If two different registrations end up with the same displayed name and organization (e.g. someone plays again from a different device with a different email but picks the same "first name + org" display), they show as one row with the better of the two scores — the lower one isn't hidden, it just shares that row's rank. Registration/login identity is still keyed by email as usual; this only affects how the board is grouped for display. Two genuinely different attendees who happen to share a display name (two people both named "Jane" at the same credit union, say) will also be grouped this way — if that's ever a real concern, encourage the nickname display mode, which is far less likely to collide.
+
 ## Backups
 
 ```bash

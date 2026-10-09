@@ -1,7 +1,7 @@
 import { config } from "../../shared/config.js";
 import { db } from "../db/index.js";
 import { eventDayFor } from "./eventDay.js";
-import { getDailyRanked, getOverallRanked } from "./standings.js";
+import { getDailyRanked, getOverallRanked, groupKeyForPlayer } from "./standings.js";
 import { toCsv } from "./csv.js";
 
 interface LeadRow {
@@ -35,9 +35,13 @@ export function buildLeadListCsv(): string {
     )
     .all() as LeadRow[];
 
-  const overallRankByPlayer = new Map(getOverallRanked().map((e) => [e.playerId, e.rank]));
+  // Ranked entries are deduped by displayed identity (see standings.ts), so
+  // a player whose own attempt didn't win their display-name group won't
+  // appear by their own playerId — look them up by that shared group key
+  // instead, same as an individual player's own standing does.
+  const overallRankByGroupKey = new Map(getOverallRanked().map((e) => [e.groupKey ?? e.playerId, e.rank]));
   const today = eventDayFor(new Date(), config.eventTimeZone);
-  const dailyRankByPlayer = new Map(getDailyRanked(today).map((e) => [e.playerId, e.rank]));
+  const dailyRankByGroupKey = new Map(getDailyRanked(today).map((e) => [e.groupKey ?? e.playerId, e.rank]));
 
   const header = [
     "First name",
@@ -54,20 +58,23 @@ export function buildLeadListCsv(): string {
     "Last played",
   ];
 
-  const body = rows.map((r) => [
-    r.first_name,
-    r.last_name,
-    r.organization,
-    r.email,
-    r.consent_given ? "yes" : "no",
-    r.consent_timestamp,
-    r.best_score,
-    overallRankByPlayer.get(r.id) ?? "",
-    dailyRankByPlayer.get(r.id) ?? "",
-    r.attempts,
-    r.first_played_at ?? "",
-    r.last_played_at ?? "",
-  ]);
+  const body = rows.map((r) => {
+    const groupKey = groupKeyForPlayer(r.id);
+    return [
+      r.first_name,
+      r.last_name,
+      r.organization,
+      r.email,
+      r.consent_given ? "yes" : "no",
+      r.consent_timestamp,
+      r.best_score,
+      groupKey != null ? (overallRankByGroupKey.get(groupKey) ?? "") : "",
+      groupKey != null ? (dailyRankByGroupKey.get(groupKey) ?? "") : "",
+      r.attempts,
+      r.first_played_at ?? "",
+      r.last_played_at ?? "",
+    ];
+  });
 
   return toCsv([header, ...body]);
 }

@@ -78,6 +78,11 @@ export interface LeaderboardRow {
   score: number;
   elapsedMs: number;
   finishedAt: string;
+  displayMode: "first_org" | "full_name" | "nickname";
+  displayValue: string | null;
+  firstName: string;
+  lastName: string;
+  organization: string;
 }
 
 /**
@@ -89,11 +94,18 @@ export interface LeaderboardRow {
  * display and ranking can be checked visually before the event), and is
  * only cleaned up in bulk via the admin "wipe test data" action. is_test
  * only affects the CSV lead export, which excludes it.
+ *
+ * Includes each row's display-name fields so the standings layer can group
+ * "same displayed identity" entries together (see displayIdentityKey) —
+ * registration/login identity stays keyed by email; this is purely about
+ * how the leaderboard listing groups rows.
  */
 export function getLeaderboardAttempts(eventDay?: string): LeaderboardRow[] {
   const rows = db
     .prepare(
-      `SELECT a.player_id AS playerId, a.total_score AS score, a.total_elapsed_ms AS elapsedMs, a.finished_at AS finishedAt
+      `SELECT a.player_id AS playerId, a.total_score AS score, a.total_elapsed_ms AS elapsedMs, a.finished_at AS finishedAt,
+              p.display_mode AS displayMode, p.display_value AS displayValue,
+              p.first_name AS firstName, p.last_name AS lastName, p.organization AS organization
        FROM attempts a
        JOIN players p ON p.id = a.player_id
        WHERE a.status = 'finished' AND a.is_practice = 0 AND p.hidden = 0

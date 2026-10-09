@@ -274,6 +274,32 @@ describe("admin CSV export", () => {
     expect(lines[0]).toContain("Overall rank");
     expect(lines[0]).toContain("Daily rank");
   });
+
+  it("gives a non-blank overall rank to a player even when a same-named player 'won' their shared leaderboard group", async () => {
+    // registerAndFinishAttempt always uses the same name/org, so these two
+    // land in the same leaderboard group (see standings.ts grouping). Both
+    // rows should still carry the group's rank in the CSV, not just whichever
+    // one happened to be the array's representative.
+    await registerAndFinishAttempt("admin-fixture-csv-rank-a@example.com");
+    await registerAndFinishAttempt("admin-fixture-csv-rank-b@example.com");
+
+    const csv = await app.inject({
+      method: "GET",
+      url: "/api/admin/export.csv",
+      cookies: { admin_session: adminCookie },
+    });
+    const lines = csv.body.trim().split("\r\n");
+    const header = lines[0]!.split(",");
+    const emailCol = header.indexOf("Email");
+    const rankCol = header.indexOf("Overall rank");
+
+    const rowA = lines.find((l) => l.includes("admin-fixture-csv-rank-a@example.com"))!.split(",");
+    const rowB = lines.find((l) => l.includes("admin-fixture-csv-rank-b@example.com"))!.split(",");
+    expect(rowA[emailCol]).toBe("admin-fixture-csv-rank-a@example.com");
+    expect(rowA[rankCol]).not.toBe("");
+    expect(rowB[rankCol]).not.toBe("");
+    expect(rowA[rankCol]).toBe(rowB[rankCol]);
+  });
 });
 
 describe("admin questions", () => {

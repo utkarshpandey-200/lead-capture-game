@@ -42,7 +42,7 @@ const adminOnly = { preHandler: async (req: FastifyRequest) => requireAdmin(req)
 export async function adminRoutes(app: FastifyInstance): Promise<void> {
   app.post(
     "/api/admin/login",
-    { config: { rateLimit: { max: 10, timeWindow: "1 minute" } } },
+    { config: { rateLimit: { max: config.rateLimits.adminLoginMax, timeWindow: "1 minute" } } },
     async (req, reply) => {
       const body = adminLoginSchema.parse(req.body);
       if (!config.server.adminPassword || body.password !== config.server.adminPassword) {

@@ -10,7 +10,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
     "/api/register",
     {
       config: {
-        rateLimit: { max: 8, timeWindow: "1 minute" },
+        rateLimit: { max: config.rateLimits.registerMax, timeWindow: "1 minute" },
       },
     },
     async (req, reply) => {
