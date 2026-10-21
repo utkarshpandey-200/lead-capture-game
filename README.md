@@ -90,7 +90,15 @@ Key variables to review before the event:
 | `BOOKING_URL`, `PRIVACY_POLICY_URL`, `PLAY_BASE_URL` | **Replace these placeholders before the event.** |
 | `BRAND_*`, `QUIZ_TITLE`, `INTRO_*` | Branding and copy. |
 
-`BRAND_LOGO_PATH` defaults to a placeholder SVG at `src/client/public/brand/logo-placeholder.svg`. Drop your real logo in `src/client/public/brand/` and point `BRAND_LOGO_PATH` at it (rebuild the client after changing files in `public/`).
+### Branding
+
+Colors, logo, and typeface default to Precision CUSO's actual brand kit, pulled from precisioncuso.org's live site:
+
+- **Logo:** `src/client/public/brand/precision-cuso-logo.webp` (full color lockup — mark, "precisioncuso" wordmark, and the "Own. Control. Scale." tagline), plus a standalone mark-only `precision-cuso-icon.png` and the site's real favicon/apple-touch-icon. On the dark `/display` screen the logo sits in a small white chip so its real colors stay intact against the dark background, rather than being recolored.
+- **Colors:** `BRAND_PRIMARY_COLOR=#072559` (navy), `BRAND_SECONDARY_COLOR=#F5B731` (gold), `BRAND_ACCENT_COLOR=#0F8B4C` (success green) — the same tokens the site uses for its primary buttons, accent, and success states. The neutral background/text/border palette in `src/client/src/styles.css` was also tuned to match the site's tokens (`--ink`, `--muted`, `--line`, etc.).
+- **Typeface:** DM Sans Variable, self-hosted at `src/client/public/fonts/dm-sans-variable.woff2` (not loaded from Google Fonts) so the booth app never depends on an external font CDN over convention wifi.
+
+If the brand kit ever changes, swap the files in `src/client/public/brand/` and `public/fonts/`, update `BRAND_LOGO_PATH` and the three `BRAND_*_COLOR` vars, and rebuild the client (changes to `public/` need a rebuild, not just a server restart).
 
 ## Questions
 

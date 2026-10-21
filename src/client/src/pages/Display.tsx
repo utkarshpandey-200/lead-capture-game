@@ -28,7 +28,9 @@ export default function Display(): JSX.Element {
     <div className="display-page">
       <div className="display-header">
         <div className="display-brand">
-          <img src={cfg.brand.logoPath} alt={cfg.brand.name} />
+          <div className="display-logo-chip">
+            <img src={cfg.brand.logoPath} alt={cfg.brand.name} />
+          </div>
           <h1>{cfg.copy.quizTitle}</h1>
         </div>
         <div className="display-board-label" role="tablist" aria-label="Leaderboard">

@@ -25,13 +25,15 @@ function envBool(name: string, fallback: boolean): boolean {
 }
 
 export const config = {
-  // Branding
+  // Branding — colors and logo pulled from precisioncuso.org's live design
+  // system (navy/blue/gold palette, DM Sans typeface). Swap BRAND_LOGO_PATH
+  // and the three color vars if the real brand kit ever changes.
   brand: {
     name: envStr("BRAND_NAME", "Precision CUSO"),
-    logoPath: envStr("BRAND_LOGO_PATH", "/brand/logo-placeholder.svg"),
-    primaryColor: envStr("BRAND_PRIMARY_COLOR", "#1C3D5A"),
-    secondaryColor: envStr("BRAND_SECONDARY_COLOR", "#F2A71B"),
-    accentColor: envStr("BRAND_ACCENT_COLOR", "#2E9E6B"),
+    logoPath: envStr("BRAND_LOGO_PATH", "/brand/precision-cuso-logo.webp"),
+    primaryColor: envStr("BRAND_PRIMARY_COLOR", "#072559"),
+    secondaryColor: envStr("BRAND_SECONDARY_COLOR", "#F5B731"),
+    accentColor: envStr("BRAND_ACCENT_COLOR", "#0F8B4C"),
   },
 
   // Copy
