@@ -3,6 +3,12 @@ import type { FastifyInstance } from "fastify";
 import { buildApp } from "../../src/server/app.js";
 import { getQuestionById } from "../../src/server/db/questions.js";
 import { getAttemptQuestions } from "../../src/server/db/attemptQuestions.js";
+import { config } from "../../src/shared/config.js";
+
+// Derived from config rather than hardcoded, so the test suite doesn't
+// silently drift out of sync with the configured question count/limit.
+const TOTAL_QUESTIONS = config.quiz.knowledgeCount + config.quiz.scenarioCount;
+const MAX_SCORE = TOTAL_QUESTIONS * config.quiz.maxScorePerQuestion;
 
 function extractCookie(setCookieHeader: string | string[] | undefined, name: string): string {
   const headers = Array.isArray(setCookieHeader) ? setCookieHeader : [setCookieHeader ?? ""];
@@ -75,9 +81,9 @@ async function answerCurrentCorrectly(pid: string, attemptId: string) {
   return answerRes.json();
 }
 
-/** Plays all 5 questions of an attempt, answering the first `numCorrect` correctly (max points) and the rest wrong (0 points), to get a deterministic, controllable score. */
+/** Plays all questions of an attempt, answering the first `numCorrect` correctly (max points) and the rest wrong (0 points), to get a deterministic, controllable score. */
 async function playAttemptWithScore(pid: string, attemptId: string, numCorrect: number) {
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < TOTAL_QUESTIONS; i++) {
     const qRes = await app.inject({
       method: "GET",
       url: `/api/attempts/${attemptId}/question`,
@@ -103,12 +109,12 @@ async function playAttemptWithScore(pid: string, attemptId: string, numCorrect: 
         clientElapsedMs: 0,
       },
     });
-    if (i === 4) return answerRes.json();
+    if (i === TOTAL_QUESTIONS - 1) return answerRes.json();
   }
 }
 
 describe("full player flow", () => {
-  it("registers, plays 5 questions, sees a result, and appears on the public leaderboard", async () => {
+  it("registers, plays all questions, sees a result, and appears on the public leaderboard", async () => {
     const { pid } = await registerPlayer("flow-player-1@example.com");
 
     const startRes = await app.inject({
@@ -122,15 +128,15 @@ describe("full player flow", () => {
     expect(attemptId).toBeTruthy();
 
     let last;
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < TOTAL_QUESTIONS; i++) {
       last = await answerCurrentCorrectly(pid, attemptId);
       expect(last.correct).toBe(true);
       expect(last.pointsEarned).toBe(1000); // instant + correct = base + full speed bonus
     }
 
     expect(last.isLastQuestion).toBe(true);
-    expect(last.result.totalScore).toBe(5000);
-    expect(last.result.numCorrect).toBe(5);
+    expect(last.result.totalScore).toBe(MAX_SCORE);
+    expect(last.result.numCorrect).toBe(TOTAL_QUESTIONS);
     expect(last.result.overall.rank).toBe(1);
     expect(last.result.daily.rank).toBe(1);
 
@@ -140,12 +146,12 @@ describe("full player flow", () => {
       cookies: { pid },
     });
     expect(resultRes.statusCode).toBe(200);
-    expect(resultRes.json().totalScore).toBe(5000);
+    expect(resultRes.json().totalScore).toBe(MAX_SCORE);
 
     const boardRes = await app.inject({ method: "GET", url: "/api/leaderboard/top?board=overall" });
     expect(boardRes.statusCode).toBe(200);
     const board = boardRes.json();
-    expect(board.entries.some((e: { score: number }) => e.score === 5000)).toBe(true);
+    expect(board.entries.some((e: { score: number }) => e.score === MAX_SCORE)).toBe(true);
     // Never leak email or raw internals on the public board.
     expect(JSON.stringify(board)).not.toContain("flow-player-1@example.com");
     for (const entry of board.entries) {
@@ -225,7 +231,7 @@ describe("full player flow", () => {
       });
       expect(startRes.statusCode).toBe(200);
       const { attemptId } = startRes.json();
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < TOTAL_QUESTIONS; i++) {
         await answerCurrentCorrectly(pid, attemptId);
       }
     }

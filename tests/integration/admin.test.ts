@@ -3,6 +3,9 @@ import type { FastifyInstance } from "fastify";
 import { buildApp } from "../../src/server/app.js";
 import { getQuestionById } from "../../src/server/db/questions.js";
 import { getAttemptQuestions } from "../../src/server/db/attemptQuestions.js";
+import { config } from "../../src/shared/config.js";
+
+const TOTAL_QUESTIONS = config.quiz.knowledgeCount + config.quiz.scenarioCount;
 
 function extractCookie(setCookieHeader: string | string[] | undefined, name: string): string {
   const headers = Array.isArray(setCookieHeader) ? setCookieHeader : [setCookieHeader ?? ""];
@@ -50,7 +53,7 @@ async function registerAndFinishAttempt(email: string, isTest = false) {
   });
   const { attemptId } = startRes.json();
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < TOTAL_QUESTIONS; i++) {
     const qRes = await app.inject({
       method: "GET",
       url: `/api/attempts/${attemptId}/question`,

@@ -24,6 +24,12 @@ function envBool(name: string, fallback: boolean): boolean {
   return v === "true" || v === "1";
 }
 
+// Pulled out so questionsPerAttempt (a display-only value — selection itself
+// is driven directly by knowledgeCount/scenarioCount) can be derived from the
+// same numbers rather than configured separately, which can drift out of sync.
+const quizKnowledgeCount = envInt("QUIZ_KNOWLEDGE_COUNT", 2);
+const quizScenarioCount = envInt("QUIZ_SCENARIO_COUNT", 1);
+
 export const config = {
   // Branding — colors and logo pulled from precisioncuso.org's live design
   // system (navy/blue/gold palette, DM Sans typeface). Swap BRAND_LOGO_PATH
@@ -38,14 +44,14 @@ export const config = {
 
   // Copy
   copy: {
-    quizTitle: envStr("QUIZ_TITLE", "The AI-in-Lending Speed Quiz"),
+    quizTitle: envStr("QUIZ_TITLE", "Credit Union Quiz"),
     introHeadline: envStr(
       "INTRO_HEADLINE",
-      "How fast — and how well — do you know AI in lending?"
+      "How fast and how well do you know about the Credit Union movement?"
     ),
     introBody: envStr(
       "INTRO_BODY",
-      "Answer 5 quick questions on AI-driven credit decisioning. You're scored on accuracy and speed. Top 5 scores are shown live at the booth."
+      "Answer 3 quick questions about Credit Union movement. You're scored on accuracy and speed."
     ),
     boothCta: envStr("BOOTH_CTA", "Scan to play. Top 5 are shown here."),
     consentText: envStr(
@@ -70,9 +76,9 @@ export const config = {
 
   // Quiz mechanics
   quiz: {
-    questionsPerAttempt: envInt("QUESTIONS_PER_ATTEMPT", 5),
-    knowledgeCount: envInt("QUIZ_KNOWLEDGE_COUNT", 3),
-    scenarioCount: envInt("QUIZ_SCENARIO_COUNT", 2),
+    knowledgeCount: quizKnowledgeCount,
+    scenarioCount: quizScenarioCount,
+    questionsPerAttempt: quizKnowledgeCount + quizScenarioCount,
     questionTimeLimitMs: envInt("QUESTION_TIME_LIMIT_MS", 20000),
     maxAttempts: envInt("MAX_ATTEMPTS", 2),
     maxScorePerQuestion: 1000,

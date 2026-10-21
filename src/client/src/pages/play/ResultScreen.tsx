@@ -41,7 +41,7 @@ export default function ResultScreen({
   const cfg = useClientConfig();
   const animatedScore = useCountUp(result.totalScore);
   const playUrl = cfg.links.playBaseUrl;
-  const shareText = `I scored ${result.totalScore} on the AI-in-lending speed quiz at ACU Lending Council! ${playUrl}`;
+  const shareText = `I scored ${result.totalScore} on the ${cfg.copy.quizTitle} at ACU Lending Council! ${playUrl}`;
 
   function handleShare() {
     const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(playUrl)}`;
