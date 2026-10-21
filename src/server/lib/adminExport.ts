@@ -18,7 +18,11 @@ interface LeadRow {
   last_played_at: string | null;
 }
 
-/** The full lead list CSV: every registered player who isn't flagged as test data. */
+/**
+ * The full lead list CSV: every registered player who isn't flagged as test
+ * data AND provided an email (an anonymous player — email was optional at
+ * registration — has nothing a lead list could contact them with).
+ */
 export function buildLeadListCsv(): string {
   const rows = db
     .prepare(
@@ -29,7 +33,7 @@ export function buildLeadListCsv(): string {
               MAX(CASE WHEN a.is_practice = 0 THEN a.started_at END) AS last_played_at
        FROM players p
        LEFT JOIN attempts a ON a.player_id = p.id
-       WHERE p.is_test = 0
+       WHERE p.is_test = 0 AND p.email IS NOT NULL
        GROUP BY p.id
        ORDER BY best_score DESC`
     )

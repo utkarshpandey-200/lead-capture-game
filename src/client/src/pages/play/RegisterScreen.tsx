@@ -31,7 +31,7 @@ export default function RegisterScreen({
     if (!firstName.trim()) next.firstName = "Required";
     if (!lastName.trim()) next.lastName = "Required";
     if (!organization.trim()) next.organization = "Required";
-    if (!EMAIL_RE.test(email.trim())) next.email = "Enter a valid email address";
+    if (email.trim() && !EMAIL_RE.test(email.trim())) next.email = "Enter a valid email address";
     if (!consent) next.consent = "Consent is required to play";
     if (displayMode === "nickname") {
       const check = checkNickname(nickname, cfg.nicknameBlocklist ?? []);
@@ -55,7 +55,7 @@ export default function RegisterScreen({
       firstName: firstName.trim(),
       lastName: lastName.trim(),
       organization: organization.trim(),
-      email: email.trim(),
+      email: email.trim() || undefined,
       consent,
       displayMode,
       nickname: displayMode === "nickname" ? nickname.trim() : undefined,
@@ -119,7 +119,7 @@ export default function RegisterScreen({
         </div>
 
         <div className="field">
-          <label htmlFor="email">Work email</label>
+          <label htmlFor="email">Work email (optional)</label>
           <input
             id="email"
             type="email"

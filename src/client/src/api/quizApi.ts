@@ -15,7 +15,8 @@ export interface RegisterPayload {
   firstName: string;
   lastName: string;
   organization: string;
-  email: string;
+  /** Optional — omitting it means anonymous play (no returning-player resume, excluded from the lead export). */
+  email?: string;
   consent: boolean;
   displayMode: DisplayMode;
   nickname?: string;

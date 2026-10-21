@@ -57,7 +57,8 @@ export default function PlayersTab(): JSX.Element {
   }
 
   async function handleDelete(p: AdminPlayerRow) {
-    if (!window.confirm(`Delete ${p.firstName} ${p.lastName} (${p.email}) and all their attempts? This can't be undone.`)) {
+    const label = p.email ? `${p.firstName} ${p.lastName} (${p.email})` : `${p.firstName} ${p.lastName} (anonymous)`;
+    if (!window.confirm(`Delete ${label} and all their attempts? This can't be undone.`)) {
       return;
     }
     await adminApi.deletePlayer(p.id);
@@ -131,7 +132,7 @@ export default function PlayersTab(): JSX.Element {
                   {p.firstName} {p.lastName}
                 </td>
                 <td>{p.organization}</td>
-                <td>{p.email}</td>
+                <td>{p.email ?? <span className="screen-body">Anonymous</span>}</td>
                 <td>{p.bestScore}</td>
                 <td>{p.attempts}</td>
                 <td>{formatDate(p.lastPlayedAt)}</td>

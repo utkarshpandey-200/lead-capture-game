@@ -4,7 +4,18 @@ export const registerSchema = z.object({
   firstName: z.string().trim().min(1).max(60),
   lastName: z.string().trim().min(1).max(60),
   organization: z.string().trim().min(1).max(120),
-  email: z.string().trim().toLowerCase().email().max(200),
+  // Optional: a player who skips it plays anonymously (new record each time,
+  // no returning-player resume, not included in the lead-list export).
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .max(200)
+    .optional()
+    .or(z.literal(""))
+    .refine((v) => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), {
+      message: "Enter a valid email address",
+    }),
   consent: z.literal(true, {
     errorMap: () => ({ message: "Consent is required to play." }),
   }),

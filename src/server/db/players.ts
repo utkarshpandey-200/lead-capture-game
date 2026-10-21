@@ -3,7 +3,7 @@ import type { DisplayMode } from "../../shared/types.js";
 
 export interface PlayerRow {
   id: string;
-  email: string;
+  email: string | null;
   first_name: string;
   last_name: string;
   organization: string;
@@ -19,7 +19,7 @@ export interface PlayerRow {
 
 export interface CreatePlayerInput {
   id: string;
-  email: string;
+  email: string | null;
   firstName: string;
   lastName: string;
   organization: string;
@@ -121,7 +121,7 @@ export interface AdminPlayerRow {
   firstName: string;
   lastName: string;
   organization: string;
-  email: string;
+  email: string | null;
   bestScore: number;
   attempts: number;
   lastPlayedAt: string | null;
@@ -171,7 +171,7 @@ export function listPlayersForAdmin(params: AdminPlayerListParams): AdminPlayerR
         p.firstName.toLowerCase().includes(search) ||
         p.lastName.toLowerCase().includes(search) ||
         p.organization.toLowerCase().includes(search) ||
-        p.email.toLowerCase().includes(search)
+        (p.email ?? "").toLowerCase().includes(search)
     );
   }
 
@@ -184,7 +184,7 @@ export function listPlayersForAdmin(params: AdminPlayerListParams): AdminPlayerR
       case "organization":
         return p.organization.toLowerCase();
       case "email":
-        return p.email;
+        return p.email ?? "";
       case "best_score":
         return p.bestScore;
       case "attempts":

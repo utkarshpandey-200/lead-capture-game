@@ -10,7 +10,8 @@ export interface RegisterParams {
   firstName: string;
   lastName: string;
   organization: string;
-  email: string;
+  /** Optional. A player who omits it plays anonymously: a fresh record every time, no returning-player resume. */
+  email?: string;
   displayMode: DisplayMode;
   nickname?: string;
   isTest?: boolean;
@@ -42,10 +43,15 @@ function resolveDisplayValue(params: RegisterParams): string | null {
  * device. On return, personal fields (name/organization) are preserved
  * as originally captured — only the display preference is refreshed —
  * and no stored personal detail is echoed back to the caller.
+ *
+ * Email is optional: a player who omits it always gets a brand-new player
+ * record (there's nothing to look up by), so they play anonymously — no
+ * "welcome back", no cross-device resume, and they're excluded from the
+ * lead-list CSV export (nothing to contact them with).
  */
 export function registerOrResume(params: RegisterParams): RegisterOutcome {
-  const email = params.email.trim().toLowerCase();
-  const existing = getPlayerByEmail(email);
+  const email = params.email?.trim().toLowerCase() || null;
+  const existing = email ? getPlayerByEmail(email) : undefined;
 
   if (existing) {
     const displayValue = resolveDisplayValue(params);

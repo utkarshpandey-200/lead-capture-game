@@ -5,7 +5,7 @@ export interface AdminPlayerRow {
   firstName: string;
   lastName: string;
   organization: string;
-  email: string;
+  email: string | null;
   bestScore: number;
   attempts: number;
   lastPlayedAt: string | null;

@@ -351,3 +351,88 @@ describe("leaderboard grouping by display identity", () => {
     expect(lowResultNow.json().overall.rank).toBeGreaterThan(0);
   });
 });
+
+describe("anonymous registration (email omitted)", () => {
+  async function registerWithoutEmail(firstName: string, organization: string) {
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/register",
+      payload: {
+        firstName,
+        lastName: "Anon",
+        organization,
+        consent: true,
+        displayMode: "first_org",
+        // email omitted entirely
+      },
+    });
+    expect(res.statusCode).toBe(200);
+    const pid = extractCookie(res.headers["set-cookie"], "pid");
+    return { body: res.json(), pid };
+  }
+
+  it("registers successfully with no email and never reports isReturning", async () => {
+    const { body } = await registerWithoutEmail("Skylar", "No Email CU");
+    expect(body.isReturning).toBe(false);
+    expect(body.firstName).toBe("Skylar");
+  });
+
+  it("gives two anonymous registrations with identical name/org separate player identities (each gets their own attempt cap)", async () => {
+    const { pid: pidA } = await registerWithoutEmail("Twin", "Dup CU");
+    const { pid: pidB } = await registerWithoutEmail("Twin", "Dup CU");
+    expect(pidA).not.toBe(pidB);
+  });
+
+  it("rejects a malformed (non-empty) email even though email itself is optional", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/register",
+      payload: {
+        firstName: "Bad",
+        lastName: "Email",
+        organization: "Typo CU",
+        email: "not-an-email",
+        consent: true,
+        displayMode: "first_org",
+      },
+    });
+    expect(res.statusCode).toBe(400);
+  });
+
+  it("an anonymous player can finish an attempt and appear on the public leaderboard", async () => {
+    const { pid } = await registerWithoutEmail("Reese", "Anon Board CU");
+    const startRes = await app.inject({
+      method: "POST",
+      url: "/api/attempts/start",
+      cookies: { pid },
+      payload: {},
+    });
+    const { attemptId } = startRes.json();
+    for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+      await answerCurrentCorrectly(pid, attemptId);
+    }
+
+    const board = await app.inject({ method: "GET", url: "/api/leaderboard/top?board=overall" });
+    expect(
+      board.json().entries.some((e: { displayName: string }) => e.displayName === "Reese")
+    ).toBe(true);
+  });
+
+  it("is excluded from the CSV lead export (nothing to contact them with)", async () => {
+    await registerWithoutEmail("Excluded", "No Email Export CU");
+
+    const loginRes = await app.inject({
+      method: "POST",
+      url: "/api/admin/login",
+      payload: { password: "test-admin-password" },
+    });
+    const adminCookie = extractCookie(loginRes.headers["set-cookie"], "admin_session");
+
+    const csv = await app.inject({
+      method: "GET",
+      url: "/api/admin/export.csv",
+      cookies: { admin_session: adminCookie },
+    });
+    expect(csv.body).not.toContain("Excluded");
+  });
+});
