@@ -41,16 +41,6 @@
   --transition-med: 300ms ease;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #04102a;
-    --color-surface: #0a2350;
-    --color-text: #ffffff;
-    --color-text-muted: #92a9cc;
-    --color-border: rgba(255, 255, 255, 0.14);
-  }
-}
-
 * {
   box-sizing: border-box;
 }
