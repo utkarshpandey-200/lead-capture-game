@@ -1,427 +1,53 @@
 [
   {
-    "id": "q-cc-001",
-    "category": "champion-challenger testing",
+    "id": "q-cu-001",
+    "category": "credit union movement history",
     "type": "knowledge",
     "difficulty": 1,
-    "prompt": "In champion-challenger testing, what is the 'challenger'?",
+    "prompt": "The first credit union chartered in the US, St. Mary's Cooperative Credit Association (1909), was founded by French-Canadian parishioners in which city?",
     "options": [
-      "The strategy currently in production",
-      "A new strategy tested against production on a share of applications",
-      "A regulator's benchmark model",
-      "A manual underwriting override"
+      "Boston, Massachusetts",
+      "Manchester, New Hampshire",
+      "Providence, Rhode Island",
+      "Burlington, Vermont"
     ],
     "correctIndex": 1,
-    "explanation": "The challenger runs alongside the champion on a controlled share of traffic so its performance can be compared fairly.",
-    "reference": "Standard model risk management practice for controlled model rollouts.",
+    "explanation": "Manchester had a large French-Canadian mill-worker community, and Alphonse Desjardins helped bring the Quebec caisse populaire model across the border to organize it. The institution still operates today as St. Mary's Bank. Boston is a tempting distractor because Massachusetts passed an early state credit union law in 1909 and Edward Filene was based there, but the first charter went to New Hampshire.",
+    "reference": "St. Mary's Bank (formerly St. Mary's Cooperative Credit Association), Manchester, NH — first credit union chartered in the United States, 1909.",
     "status": "draft"
   },
   {
-    "id": "q-cc-003",
-    "category": "champion-challenger testing",
-    "type": "scenario",
-    "difficulty": 2,
-    "prompt": "A new decisioning model raises approvals 5% with no change in charge-offs. What should you check before rollout?",
-    "options": [
-      "Whether the gain holds across segments and is explainable",
-      "Nothing, the result speaks for itself",
-      "Only the average credit score of approved borrowers",
-      "Whether competitors use the same model"
-    ],
-    "correctIndex": 0,
-    "explanation": "An aggregate gain can mask uneven or unexplainable effects in specific segments, which matters for both risk and fair lending review.",
-    "reference": "Model risk management and fair lending review practice.",
-    "status": "draft"
-  },
-  {
-    "id": "q-mrm-001",
-    "category": "model risk management",
-    "type": "knowledge",
-    "difficulty": 1,
-    "prompt": "Under SR 11-7, what are the three core pillars of model risk management?",
-    "options": [
-      "Marketing, sales, and pricing",
-      "Development, implementation, and use; validation; governance",
-      "Only annual external audits",
-      "Customer complaints and legal review"
-    ],
-    "correctIndex": 1,
-    "explanation": "SR 11-7 centers on sound development/implementation/use, independent validation, and strong governance.",
-    "reference": "Federal Reserve SR 11-7 guidance on model risk management.",
-    "status": "draft"
-  },
-  {
-    "id": "q-mrm-003",
-    "category": "model risk management",
+    "id": "q-cu-002",
+    "category": "credit union industry data",
     "type": "knowledge",
     "difficulty": 2,
-    "prompt": "Why does SR 11-7 call for validation to be independent of model development?",
+    "prompt": "As of recent 2026 numbers, roughly how many US credit unions have total assets above $5 billion, according to FI Navigator?",
     "options": [
-      "To slow down implementation on purpose",
-      "To avoid conflicts of interest that could hide flaws",
-      "Because developers are legally barred from testing models",
-      "To satisfy a marketing requirement"
-    ],
-    "correctIndex": 1,
-    "explanation": "Independence reduces the risk that the people with incentive to see a model succeed are the only ones checking it.",
-    "reference": "SR 11-7 validation independence expectations.",
-    "status": "draft"
-  },
-  {
-    "id": "q-mrm-005",
-    "category": "model risk management",
-    "type": "scenario",
-    "difficulty": 2,
-    "prompt": "A vendor model's internal logic can't be fully documented by the credit union. What should you do?",
-    "options": [
-      "Use it anyway since the vendor is reputable",
-      "Skip validation since it's a third-party model",
-      "Apply added scrutiny, testing, and compensating controls",
-      "Assume SR 11-7 doesn't apply to vendor models"
+      "62",
+      "77",
+      "92",
+      "108"
     ],
     "correctIndex": 2,
-    "explanation": "SR 11-7 applies to vendor and internal models alike; limited transparency calls for more outcome testing and controls, not less.",
-    "reference": "SR 11-7 guidance on vendor and third-party models.",
+    "explanation": "Explanation pending — add before the event.",
+    "reference": "FI Navigator credit union industry data.",
     "status": "draft"
   },
   {
-    "id": "q-drift-001",
-    "category": "model drift and performance monitoring",
-    "type": "knowledge",
+    "id": "q-cu-003",
+    "category": "credit union movement history",
+    "type": "scenario",
     "difficulty": 1,
-    "prompt": "What is 'model drift' in a credit decisioning context?",
+    "prompt": "Placeholder — question to be added.",
     "options": [
-      "A model's predictions becoming less accurate as conditions change",
-      "A scheduled software update to the scoring engine",
-      "A change in the credit union's logo or branding",
-      "A model running on a different server region"
+      "Placeholder A",
+      "Placeholder B",
+      "Placeholder C",
+      "Placeholder D"
     ],
     "correctIndex": 0,
-    "explanation": "Drift happens when the relationship between inputs and outcomes shifts, degrading a model's real-world accuracy over time.",
-    "reference": "General model monitoring practice.",
-    "status": "draft"
-  },
-  {
-    "id": "q-drift-002",
-    "category": "model drift and performance monitoring",
-    "type": "knowledge",
-    "difficulty": 2,
-    "prompt": "Which is a common early warning sign of model drift?",
-    "options": [
-      "Predicted and actual default rates diverging over time",
-      "A model file's unchanged timestamp",
-      "An increase in the number of options on an application form",
-      "A new employee joining the credit team"
-    ],
-    "correctIndex": 0,
-    "explanation": "Widening gaps between predicted and actual outcomes are a classic sign the model no longer fits current conditions.",
-    "reference": "General model performance monitoring practice.",
-    "status": "draft"
-  },
-  {
-    "id": "q-drift-003",
-    "category": "model drift and performance monitoring",
-    "type": "scenario",
-    "difficulty": 2,
-    "prompt": "A model's approval rate is stable, but delinquency on approved loans is rising. What's the best first step?",
-    "options": [
-      "Lower the approval threshold without further review",
-      "Assume it's unrelated to the model and move on",
-      "Investigate whether the model's inputs still predict risk as expected",
-      "Wait for the annual review cycle before looking into it"
-    ],
-    "correctIndex": 2,
-    "explanation": "Rising delinquency with a stable approval rate often signals the model's risk ranking has weakened and needs investigation now, not at the next scheduled review.",
-    "reference": "Ongoing performance monitoring practice under model risk management.",
-    "status": "draft"
-  },
-  {
-    "id": "q-drift-004",
-    "category": "model drift and performance monitoring",
-    "type": "scenario",
-    "difficulty": 3,
-    "prompt": "An economic downturn hits a region a model wasn't trained on. What's the most appropriate response?",
-    "options": [
-      "Nothing, models are region-agnostic by design",
-      "Increase monitoring and consider recalibration for that segment",
-      "Immediately shut down lending everywhere",
-      "Only adjust pricing, not the model"
-    ],
-    "correctIndex": 1,
-    "explanation": "A shock in an under-represented segment calls for closer monitoring and likely recalibration, rather than a blanket reaction.",
-    "reference": "Model monitoring practice under changing economic conditions.",
-    "status": "draft"
-  },
-  {
-    "id": "q-explain-001",
-    "category": "explainability and adverse action reasons",
-    "type": "knowledge",
-    "difficulty": 1,
-    "prompt": "What is an 'adverse action reason' in lending?",
-    "options": [
-      "A marketing disclaimer on loan ads",
-      "The specific reason given to an applicant who is denied credit",
-      "An internal audit finding",
-      "A regulator's penalty notice to a lender"
-    ],
-    "correctIndex": 1,
-    "explanation": "Adverse action reasons tell a declined applicant the principal factors behind the decision, as required by law.",
-    "reference": "Equal Credit Opportunity Act / Regulation B adverse action requirements.",
-    "status": "draft"
-  },
-  {
-    "id": "q-explain-002",
-    "category": "explainability and adverse action reasons",
-    "type": "knowledge",
-    "difficulty": 2,
-    "prompt": "Why does model explainability matter for adverse action notices?",
-    "options": [
-      "It's only relevant for marketing copy",
-      "It lets lenders give specific, accurate reasons for a denial",
-      "It is optional if the model is highly accurate",
-      "It replaces the need for any model documentation"
-    ],
-    "correctIndex": 1,
-    "explanation": "Lenders must identify the actual factors that drove a denial; a model that can't be explained makes that legally required step harder to do accurately.",
-    "reference": "Regulation B requirements on specific and accurate adverse action reasons.",
-    "status": "draft"
-  },
-  {
-    "id": "q-explain-003",
-    "category": "explainability and adverse action reasons",
-    "type": "scenario",
-    "difficulty": 2,
-    "prompt": "A complex model denies an applicant but the top reason codes don't clearly map to the application. What should happen?",
-    "options": [
-      "Send the notice anyway since a decision was made",
-      "Investigate and ensure the stated reasons are accurate before sending",
-      "Approve the applicant instead to avoid the issue",
-      "Let the applicant guess the reason"
-    ],
-    "correctIndex": 1,
-    "explanation": "Adverse action reasons must be accurate and specific to the applicant; mismatched reason codes need to be resolved before the notice goes out.",
-    "reference": "Regulation B accuracy requirements for stated reasons.",
-    "status": "draft"
-  },
-  {
-    "id": "q-fair-001",
-    "category": "fair lending and disparate impact basics",
-    "type": "knowledge",
-    "difficulty": 1,
-    "prompt": "What does 'disparate impact' mean in fair lending?",
-    "options": [
-      "Intentional discrimination stated openly in policy",
-      "A neutral policy that disproportionately harms a protected group",
-      "A difference in loan amounts between branches",
-      "A regulator's routine exam schedule"
-    ],
-    "correctIndex": 1,
-    "explanation": "Disparate impact concerns facially neutral practices that still produce unequal outcomes across protected groups, regardless of intent.",
-    "reference": "Fair lending disparate impact doctrine under ECOA and Fair Housing Act case law.",
-    "status": "draft"
-  },
-  {
-    "id": "q-fair-002",
-    "category": "fair lending and disparate impact basics",
-    "type": "knowledge",
-    "difficulty": 2,
-    "prompt": "If a model never uses race or sex as inputs, can it still raise fair lending concerns?",
-    "options": [
-      "No, excluding protected fields guarantees fairness",
-      "Yes, if correlated proxy variables drive disparate outcomes",
-      "No, only loan officers can discriminate",
-      "Yes, but only in mortgage lending"
-    ],
-    "correctIndex": 1,
-    "explanation": "Variables correlated with protected characteristics can still produce disparate outcomes even when protected fields are excluded.",
-    "reference": "Fair lending proxy variable risk under disparate impact analysis.",
-    "status": "draft"
-  },
-  {
-    "id": "q-fair-003",
-    "category": "fair lending and disparate impact basics",
-    "type": "scenario",
-    "difficulty": 3,
-    "prompt": "Testing shows a new model approves one group at a notably lower rate with similar risk profiles. What's next?",
-    "options": [
-      "Launch it, since no protected fields were used as inputs",
-      "Assess for less discriminatory alternatives before proceeding",
-      "Ignore it since the model is more 'accurate' overall",
-      "Only document it after launch, not before"
-    ],
-    "correctIndex": 1,
-    "explanation": "A disparity among similarly-risked applicants calls for a search for a less discriminatory alternative that achieves similar business goals.",
-    "reference": "Fair lending practice of evaluating less discriminatory alternatives.",
-    "status": "draft"
-  },
-  {
-    "id": "q-alt-001",
-    "category": "use of alternative or cash-flow data",
-    "type": "knowledge",
-    "difficulty": 1,
-    "prompt": "What is 'cash-flow data' typically used for in lending?",
-    "options": [
-      "Assessing income and spending patterns from bank transaction history",
-      "Replacing the need for an application form",
-      "Setting branch operating hours",
-      "Tracking a lender's internal payroll"
-    ],
-    "correctIndex": 0,
-    "explanation": "Cash-flow data draws on transaction history, such as deposits and bill payments, to help assess repayment ability.",
-    "reference": "CFPB guidance on cash-flow data in underwriting.",
-    "status": "draft"
-  },
-  {
-    "id": "q-alt-002",
-    "category": "use of alternative or cash-flow data",
-    "type": "knowledge",
-    "difficulty": 2,
-    "prompt": "Why can alternative data help applicants with thin credit files?",
-    "options": [
-      "It automatically approves every applicant",
-      "It can reveal repayment capacity not shown on a traditional credit report",
-      "It removes all regulatory requirements for those applicants",
-      "It replaces the need for income verification entirely"
-    ],
-    "correctIndex": 1,
-    "explanation": "Alternative data can surface a track record of financial behavior for applicants with limited traditional credit history.",
-    "reference": "Industry and regulatory discussion of alternative data for credit-invisible consumers.",
-    "status": "draft"
-  },
-  {
-    "id": "q-alt-003",
-    "category": "use of alternative or cash-flow data",
-    "type": "scenario",
-    "difficulty": 2,
-    "prompt": "A lender wants to add cash-flow data to its model. What should it confirm first?",
-    "options": [
-      "That the data source is popular on social media",
-      "That the data's use is tested for fairness and clearly explainable",
-      "That it will always raise approval rates",
-      "That no documentation is required since it's 'alternative'"
-    ],
-    "correctIndex": 1,
-    "explanation": "New data sources still need fair lending testing, validation, and clear explainability like any other model input.",
-    "reference": "Model risk management and fair lending expectations applied to new data sources.",
-    "status": "draft"
-  },
-  {
-    "id": "q-auto-001",
-    "category": "decision automation and manual overrides",
-    "type": "knowledge",
-    "difficulty": 1,
-    "prompt": "What is a 'manual override' in an automated decisioning system?",
-    "options": [
-      "A software bug in the scoring engine",
-      "An underwriter changing an automated decision based on judgment",
-      "A scheduled nightly system reboot",
-      "A customer appealing to a regulator directly"
-    ],
-    "correctIndex": 1,
-    "explanation": "An override is a human decision-maker changing the system's recommended outcome, typically based on information the model didn't capture.",
-    "reference": "General credit decisioning practice.",
-    "status": "draft"
-  },
-  {
-    "id": "q-auto-002",
-    "category": "decision automation and manual overrides",
-    "type": "knowledge",
-    "difficulty": 2,
-    "prompt": "Why should override patterns be tracked and reviewed?",
-    "options": [
-      "To penalize underwriters for any override",
-      "To spot systemic model gaps or inconsistent decisioning",
-      "Overrides don't need tracking once automation is in place",
-      "Only to speed up loan approval times"
-    ],
-    "correctIndex": 1,
-    "explanation": "Patterns in overrides can reveal where the model consistently misses something, or where decisions are becoming inconsistent across staff.",
-    "reference": "Model monitoring practice around override analysis.",
-    "status": "draft"
-  },
-  {
-    "id": "q-auto-003",
-    "category": "decision automation and manual overrides",
-    "type": "scenario",
-    "difficulty": 3,
-    "prompt": "Override rates on a new automated model are climbing month over month. What should leadership do?",
-    "options": [
-      "Ignore it since overrides are a normal part of lending",
-      "Investigate whether the model is missing a key factor underwriters are seeing",
-      "Immediately remove all underwriters' override ability",
-      "Assume the underwriters need more training and stop there"
-    ],
-    "correctIndex": 1,
-    "explanation": "A rising override rate is a signal worth investigating as a possible model gap, not just a staffing or training issue.",
-    "reference": "Model monitoring practice around override trend analysis.",
-    "status": "draft"
-  },
-  {
-    "id": "q-port-001",
-    "category": "portfolio metrics",
-    "type": "knowledge",
-    "difficulty": 1,
-    "prompt": "What does 'net charge-off rate' measure?",
-    "options": [
-      "The share of applications approved",
-      "Loans written off, net of recoveries, as a share of the book",
-      "The number of new accounts opened per month",
-      "The average interest rate charged"
-    ],
-    "correctIndex": 1,
-    "explanation": "Net charge-offs capture losses from loans unlikely to be repaid, net of amounts later recovered, relative to the portfolio.",
-    "reference": "Standard credit portfolio metric definitions.",
-    "status": "draft"
-  },
-  {
-    "id": "q-port-002",
-    "category": "portfolio metrics",
-    "type": "knowledge",
-    "difficulty": 1,
-    "prompt": "What does a '30-day delinquency rate' typically track?",
-    "options": [
-      "Accounts closed within 30 days of opening",
-      "Accounts at least 30 days past due on a payment",
-      "Applications processed within 30 days",
-      "Loans paid off 30 days early"
-    ],
-    "correctIndex": 1,
-    "explanation": "Delinquency rates are usually bucketed by how many days a payment is past due, with 30 days being an early-warning bucket.",
-    "reference": "Standard credit portfolio metric definitions.",
-    "status": "draft"
-  },
-  {
-    "id": "q-port-003",
-    "category": "portfolio metrics",
-    "type": "scenario",
-    "difficulty": 2,
-    "prompt": "Approval rate rose 8% this quarter and delinquency held flat. What's the most useful next check?",
-    "options": [
-      "Declare success and increase approvals further right away",
-      "Check whether the mix of approved risk segments actually shifted",
-      "Nothing further, flat delinquency confirms all is well",
-      "Only check branch-level sales figures"
-    ],
-    "correctIndex": 1,
-    "explanation": "Flat delinquency with higher approvals could reflect a true improvement, or simply not enough time for risk in new segments to emerge; segment mix helps distinguish the two.",
-    "reference": "Portfolio monitoring practice around approval-rate and risk trade-offs.",
-    "status": "draft"
-  },
-  {
-    "id": "q-port-004",
-    "category": "portfolio metrics",
-    "type": "scenario",
-    "difficulty": 2,
-    "prompt": "Leadership wants to raise approval rate with no increase in net charge-offs. What's the most defensible approach?",
-    "options": [
-      "Approve more applicants at random and hope for the best",
-      "Look for underserved segments where current risk assessment is overly conservative",
-      "Lower pricing on all loans regardless of risk",
-      "Stop monitoring delinquency during the change"
-    ],
-    "correctIndex": 1,
-    "explanation": "Finding segments where risk is currently overestimated can expand approvals without taking on more real risk, unlike broad or untargeted loosening.",
-    "reference": "Portfolio optimization practice balancing growth and risk.",
+    "explanation": "Placeholder — explanation to be added.",
+    "reference": "",
     "status": "draft"
   }
 ]
