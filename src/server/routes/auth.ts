@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { config } from "../../shared/config.js";
 import { registerSchema } from "../lib/validation.js";
-import { registerOrResume, getAttemptsRemaining } from "../lib/registerService.js";
+import { registerPlayer, getAttemptsRemaining } from "../lib/registerService.js";
 import { setPlayerSession, getPlayerIdFromRequest, PLAYER_COOKIE } from "../lib/session.js";
 import { getPlayerById } from "../db/players.js";
 
@@ -16,7 +16,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
     async (req, reply) => {
       const body = registerSchema.parse(req.body);
 
-      const outcome = registerOrResume({
+      const outcome = registerPlayer({
         firstName: body.firstName,
         lastName: body.lastName,
         organization: body.organization,
@@ -28,20 +28,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
       setPlayerSession(reply, outcome.player.id);
       const attemptsRemaining = getAttemptsRemaining(outcome.player.id);
 
-      if (outcome.isReturning) {
-        reply.send({
-          isReturning: true,
-          message: config.copy.welcomeBackText,
-          attemptsRemaining,
-          maxAttempts: config.quiz.maxAttempts,
-          displayMode: outcome.player.display_mode,
-          displayValue: outcome.player.display_value,
-        });
-        return;
-      }
-
       reply.send({
-        isReturning: false,
         firstName: outcome.player.first_name,
         attemptsRemaining,
         maxAttempts: config.quiz.maxAttempts,

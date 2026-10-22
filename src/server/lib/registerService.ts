@@ -1,7 +1,7 @@
 import { config } from "../../shared/config.js";
 import { checkNickname } from "../../shared/nickname.js";
 import type { DisplayMode } from "../../shared/types.js";
-import { createPlayer, getPlayerByEmail, updateDisplayPreference, type PlayerRow } from "../db/players.js";
+import { createPlayer, type PlayerRow } from "../db/players.js";
 import { countRankedAttempts } from "../db/attempts.js";
 import { newId } from "./ids.js";
 import { AppError } from "./errors.js";
@@ -10,7 +10,7 @@ export interface RegisterParams {
   firstName: string;
   lastName: string;
   organization: string;
-  /** Optional. A player who omits it plays anonymously: a fresh record every time, no returning-player resume. */
+  /** Optional, and never used to look up an existing player — every registration is a brand-new entry. */
   email?: string;
   displayMode: DisplayMode;
   nickname?: string;
@@ -19,7 +19,6 @@ export interface RegisterParams {
 
 export interface RegisterOutcome {
   player: PlayerRow;
-  isReturning: boolean;
 }
 
 export class InvalidNicknameError extends AppError {
@@ -39,26 +38,13 @@ function resolveDisplayValue(params: RegisterParams): string | null {
 }
 
 /**
- * Registers a new player, or resumes an existing one by email on a new
- * device. On return, personal fields (name/organization) are preserved
- * as originally captured — only the display preference is refreshed —
- * and no stored personal detail is echoed back to the caller.
- *
- * Email is optional: a player who omits it always gets a brand-new player
- * record (there's nothing to look up by), so they play anonymously — no
- * "welcome back", no cross-device resume, and they're excluded from the
- * lead-list CSV export (nothing to contact them with).
+ * Registers a brand-new player every time — email is never used to look up
+ * or resume an existing record, even if it matches a prior registration
+ * exactly. Every submission is its own unique entry, with its own attempt
+ * cap and its own leaderboard row.
  */
-export function registerOrResume(params: RegisterParams): RegisterOutcome {
+export function registerPlayer(params: RegisterParams): RegisterOutcome {
   const email = params.email?.trim().toLowerCase() || null;
-  const existing = email ? getPlayerByEmail(email) : undefined;
-
-  if (existing) {
-    const displayValue = resolveDisplayValue(params);
-    updateDisplayPreference(existing.id, params.displayMode, displayValue);
-    return { player: { ...existing, display_mode: params.displayMode, display_value: displayValue }, isReturning: true };
-  }
-
   const displayValue = resolveDisplayValue(params);
   const player = createPlayer({
     id: newId(),
@@ -72,7 +58,7 @@ export function registerOrResume(params: RegisterParams): RegisterOutcome {
     displayValue,
     isTest: params.isTest ?? false,
   });
-  return { player, isReturning: false };
+  return { player };
 }
 
 export function getAttemptsRemaining(playerId: string): number {

@@ -15,7 +15,7 @@ export interface RegisterPayload {
   firstName: string;
   lastName: string;
   organization: string;
-  /** Optional — omitting it means anonymous play (no returning-player resume, excluded from the lead export). */
+  /** Optional. Never used to look up an existing player — every registration is a brand-new entry; omitting it just excludes you from the lead export. */
   email?: string;
   consent: boolean;
   displayMode: DisplayMode;

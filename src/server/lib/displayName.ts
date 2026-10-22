@@ -36,13 +36,3 @@ export function computeDisplaySafeName(player: PlayerRow): DisplaySafeName {
     organization: player.organization,
   });
 }
-
-/**
- * Stable identity string for "is this the same leaderboard entry" purposes.
- * Two attempts with the same displayed name+organization are treated as
- * the same entry on the public leaderboard (see getLeaderboardAttempts),
- * independent of which player record they came from.
- */
-export function displayIdentityKey(name: DisplaySafeName): string {
-  return `${name.displayName.trim().toLowerCase()}|${(name.organization ?? "").trim().toLowerCase()}`;
-}

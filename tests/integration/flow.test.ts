@@ -255,8 +255,8 @@ describe("full player flow", () => {
     expect(practiceStart.json().isPractice).toBe(true);
   });
 
-  it("does not reveal stored personal details when an existing email registers again", async () => {
-    await registerPlayer("flow-player-5@example.com");
+  it("registering again with the same email creates a brand-new, separate player rather than resuming the old one", async () => {
+    const first = await registerPlayer("flow-player-5@example.com");
 
     const res = await app.inject({
       method: "POST",
@@ -272,10 +272,9 @@ describe("full player flow", () => {
     });
     expect(res.statusCode).toBe(200);
     const body = res.json();
-    expect(body.isReturning).toBe(true);
-    expect(body.message).toBeTruthy();
-    expect(body).not.toHaveProperty("firstName");
-    expect(body).not.toHaveProperty("lastName");
+    expect(body.firstName).toBe("Someone");
+    const secondPid = extractCookie(res.headers["set-cookie"], "pid");
+    expect(secondPid).not.toBe(first.pid);
   });
 
   it("rejects a registration with the honeypot field filled in", async () => {
@@ -296,8 +295,8 @@ describe("full player flow", () => {
   });
 });
 
-describe("leaderboard grouping by display identity", () => {
-  it("collapses two different players with the same displayed name+org into one leaderboard row, keeping the best score, while each player's own standing still resolves correctly", async () => {
+describe("leaderboard: every player is its own row", () => {
+  it("keeps two different players with the same displayed name+org as two separate leaderboard rows with independent standings", async () => {
     const { pid: pidLow } = await registerPlayer("same-name-low@example.com", {
       firstName: "Riley",
       organization: "Shared CU",
@@ -324,19 +323,18 @@ describe("leaderboard grouping by display identity", () => {
 
     expect(highOutcome.result.totalScore).toBeGreaterThan(lowOutcome.result.totalScore);
 
-    // Public board: one row for "Riley · Shared CU", at the higher score.
+    // Public board: two separate rows for "Riley · Shared CU", not collapsed into one.
     const board = await app.inject({ method: "GET", url: "/api/leaderboard/top?board=overall" });
     const rileyRows = board
       .json()
       .entries.filter((e: { displayName: string; organization: string }) => e.displayName === "Riley" && e.organization === "Shared CU");
-    expect(rileyRows).toHaveLength(1);
-    expect(rileyRows[0].score).toBe(highOutcome.result.totalScore);
+    expect(rileyRows).toHaveLength(2);
+    expect(rileyRows.map((r: { score: number }) => r.score).sort((a: number, b: number) => a - b)).toEqual(
+      [lowOutcome.result.totalScore, highOutcome.result.totalScore].sort((a, b) => a - b)
+    );
 
-    // Both players' own standing resolves to the shared group's rank — including the
-    // lower scorer, whose own raw attempt did NOT win the group. Re-fetch both fresh
-    // (rather than comparing the finish-time snapshots, which were taken at different
-    // points — the low player finished before the high player even registered) so
-    // this is an apples-to-apples comparison of current state.
+    // Each player's own standing is independent — the lower scorer does not
+    // inherit the higher scorer's rank just because they share a display name.
     const lowResultNow = await app.inject({
       method: "GET",
       url: `/api/attempts/${startLow.json().attemptId}/result`,
@@ -347,8 +345,7 @@ describe("leaderboard grouping by display identity", () => {
       url: `/api/attempts/${startHigh.json().attemptId}/result`,
       cookies: { pid: pidHigh },
     });
-    expect(lowResultNow.json().overall.rank).toBe(highResultNow.json().overall.rank);
-    expect(lowResultNow.json().overall.rank).toBeGreaterThan(0);
+    expect(highResultNow.json().overall.rank).toBeLessThan(lowResultNow.json().overall.rank);
   });
 });
 
@@ -371,9 +368,8 @@ describe("anonymous registration (email omitted)", () => {
     return { body: res.json(), pid };
   }
 
-  it("registers successfully with no email and never reports isReturning", async () => {
+  it("registers successfully with no email", async () => {
     const { body } = await registerWithoutEmail("Skylar", "No Email CU");
-    expect(body.isReturning).toBe(false);
     expect(body.firstName).toBe("Skylar");
   });
 

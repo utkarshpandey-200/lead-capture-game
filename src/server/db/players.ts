@@ -51,24 +51,8 @@ export function createPlayer(input: CreatePlayerInput): PlayerRow {
   return getPlayerById(input.id)!;
 }
 
-export function getPlayerByEmail(email: string): PlayerRow | undefined {
-  return db.prepare(`SELECT * FROM players WHERE email = ?`).get(email) as PlayerRow | undefined;
-}
-
 export function getPlayerById(id: string): PlayerRow | undefined {
   return db.prepare(`SELECT * FROM players WHERE id = ?`).get(id) as PlayerRow | undefined;
-}
-
-export function updateDisplayPreference(
-  id: string,
-  displayMode: DisplayMode,
-  displayValue: string | null
-): void {
-  db.prepare(`UPDATE players SET display_mode = ?, display_value = ? WHERE id = ?`).run(
-    displayMode,
-    displayValue,
-    id
-  );
 }
 
 export function updateConsent(id: string, consentVersion: string, consentTimestamp: string): void {

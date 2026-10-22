@@ -88,17 +88,12 @@ describe("pickBestPerPlayer", () => {
     expect(pickBestPerPlayer([])).toEqual([]);
   });
 
-  it("groups by groupKey instead of playerId when groupKey is set", () => {
-    // Two different raw players sharing a groupKey (e.g. same displayed name) collapse to one entry.
+  it("treats two different player ids as separate entries even with identical scores", () => {
     const best = pickBestPerPlayer([
-      { ...c("player-a", 3000, 5000, "t1"), groupKey: "jane|acme cu" },
-      { ...c("player-b", 4000, 5000, "t2"), groupKey: "jane|acme cu" },
-      { ...c("player-c", 2000, 5000, "t1"), groupKey: "other|other cu" },
+      c("player-a", 4000, 5000, "t1"),
+      c("player-b", 4000, 5000, "t2"),
     ]);
     expect(best).toHaveLength(2);
-    const janeGroup = best.find((e) => e.groupKey === "jane|acme cu");
-    expect(janeGroup?.playerId).toBe("player-b"); // the higher score within the group wins
-    expect(janeGroup?.score).toBe(4000);
   });
 });
 
@@ -156,24 +151,5 @@ describe("getStanding", () => {
     const small = rankEntries([c("a", 100, 100, "t1"), c("b", 90, 100, "t2")]);
     const standing = getStanding(small, "b");
     expect(standing?.pointGapToFifth).toBeNull();
-  });
-
-  it("finds a player by groupKey even when a different raw player won that group", () => {
-    // Mirrors the real pipeline: dedupe by groupKey first, then rank — so
-    // player-a's own playerId is entirely absent from the final ranked
-    // array (only player-b, the group's winner, survives pickBestPerPlayer).
-    const deduped = pickBestPerPlayer([
-      { ...c("player-a", 3000, 5000, "t1"), groupKey: "jane|acme cu" },
-      { ...c("player-b", 4000, 5000, "t2"), groupKey: "jane|acme cu" }, // wins the group
-      { ...c("player-c", 2000, 5000, "t1"), groupKey: "other|other cu" },
-    ]);
-    const grouped = rankEntries(deduped);
-    expect(grouped.map((e) => e.playerId)).not.toContain("player-a");
-
-    // Looking up by player-a's own groupKey should still resolve to the
-    // group's rank/score, not come back null just because player-a's own
-    // attempt wasn't the one that won the group.
-    const standing = getStanding(grouped, "jane|acme cu");
-    expect(standing?.rank).toBe(1);
   });
 });

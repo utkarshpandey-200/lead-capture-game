@@ -52,25 +52,13 @@ export interface AttemptResult {
 
 // --- Wire contracts between the client and the server ---
 
-export interface RegisterResponseNew {
-  isReturning: false;
+export interface RegisterResponse {
   firstName: string;
   attemptsRemaining: number;
   maxAttempts: number;
   displayMode: DisplayMode;
   displayValue: string | null;
 }
-
-export interface RegisterResponseReturning {
-  isReturning: true;
-  message: string;
-  attemptsRemaining: number;
-  maxAttempts: number;
-  displayMode: DisplayMode;
-  displayValue: string | null;
-}
-
-export type RegisterResponse = RegisterResponseNew | RegisterResponseReturning;
 
 export interface MeResponseAuthenticated {
   authenticated: true;

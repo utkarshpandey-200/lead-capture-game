@@ -278,11 +278,10 @@ describe("admin CSV export", () => {
     expect(lines[0]).toContain("Daily rank");
   });
 
-  it("gives a non-blank overall rank to a player even when a same-named player 'won' their shared leaderboard group", async () => {
-    // registerAndFinishAttempt always uses the same name/org, so these two
-    // land in the same leaderboard group (see standings.ts grouping). Both
-    // rows should still carry the group's rank in the CSV, not just whichever
-    // one happened to be the array's representative.
+  it("gives two same-named players their own distinct, non-blank overall rank (no shared-group rank)", async () => {
+    // registerAndFinishAttempt always uses the same name/org, but each
+    // registration is its own player record, so each gets its own row
+    // and its own rank in the CSV, not a shared one.
     await registerAndFinishAttempt("admin-fixture-csv-rank-a@example.com");
     await registerAndFinishAttempt("admin-fixture-csv-rank-b@example.com");
 
@@ -301,7 +300,7 @@ describe("admin CSV export", () => {
     expect(rowA[emailCol]).toBe("admin-fixture-csv-rank-a@example.com");
     expect(rowA[rankCol]).not.toBe("");
     expect(rowB[rankCol]).not.toBe("");
-    expect(rowA[rankCol]).toBe(rowB[rankCol]);
+    expect(rowA[rankCol]).not.toBe(rowB[rankCol]);
   });
 });
 

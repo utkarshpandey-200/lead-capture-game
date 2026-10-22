@@ -58,7 +58,6 @@ export const config = {
       "CONSENT_TEXT",
       "I agree to be contacted by Precision CUSO about this quiz and related information."
     ),
-    welcomeBackText: envStr("WELCOME_BACK_TEXT", "Welcome back"),
   },
 
   // Consent version — bump this if consentText changes meaningfully.

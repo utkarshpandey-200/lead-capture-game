@@ -95,10 +95,8 @@ export interface LeaderboardRow {
  * only cleaned up in bulk via the admin "wipe test data" action. is_test
  * only affects the CSV lead export, which excludes it.
  *
- * Includes each row's display-name fields so the standings layer can group
- * "same displayed identity" entries together (see displayIdentityKey) —
- * registration/login identity stays keyed by email; this is purely about
- * how the leaderboard listing groups rows.
+ * Includes each row's display-name fields so the public leaderboard can
+ * show the player's chosen display name/organization without a second query.
  */
 export function getLeaderboardAttempts(eventDay?: string): LeaderboardRow[] {
   const rows = db

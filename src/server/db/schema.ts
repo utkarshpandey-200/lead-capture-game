@@ -1,7 +1,7 @@
 export const SCHEMA_SQL = `
 CREATE TABLE IF NOT EXISTS players (
   id TEXT PRIMARY KEY,
-  email TEXT UNIQUE, -- nullable: a player who skips email plays anonymously (SQLite UNIQUE allows many NULLs)
+  email TEXT, -- not unique: every registration is its own player record, even with a repeated email
   first_name TEXT NOT NULL,
   last_name TEXT NOT NULL,
   organization TEXT NOT NULL,
