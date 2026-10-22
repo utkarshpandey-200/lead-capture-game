@@ -102,7 +102,7 @@ If the brand kit ever changes, swap the files in `src/client/public/brand/` and 
 
 ## Questions
 
-`data/questions.seed.json` ships with the event's 3 questions (2 knowledge / 1 scenario, matching `QUIZ_KNOWLEDGE_COUNT`/`QUIZ_SCENARIO_COUNT`), **all marked `status: "draft"`** — they need a fact-check pass (and `q-cu-003` still needs real content; it's a placeholder) before the event. Only `status: "approved"` questions are served when `ALLOW_DRAFT_QUESTIONS=false` (the production default). Since the bank is now exactly as large as one attempt needs, every attempt serves all 3 questions, just shuffled.
+`data/questions.seed.json` ships with the event's 3 questions (all `knowledge` type, matching `QUIZ_KNOWLEDGE_COUNT=3`/`QUIZ_SCENARIO_COUNT=0`), **all marked `status: "draft"`** — they need a fact-check/approval pass before the event. Only `status: "approved"` questions are served when `ALLOW_DRAFT_QUESTIONS=false` (the production default). Since the bank is exactly as large as one attempt needs, every attempt serves all 3 questions, just shuffled.
 
 To approve questions: log into `/admin` → Questions, review each one, and toggle its status. To bulk-import a revised question set, paste or upload JSON in the same tab (same shape as the seed file; existing ids are updated in place, new ids are added).
 

@@ -21,7 +21,7 @@
     "category": "credit union industry data",
     "type": "knowledge",
     "difficulty": 2,
-    "prompt": "As of recent 2026 numbers, roughly how many US credit unions have total assets above $5 billion, according to FI Navigator?",
+    "prompt": "As of recent 2026 numbers, roughly how many US credit unions have total assets above $5 billion?",
     "options": [
       "62",
       "77",
@@ -29,25 +29,25 @@
       "108"
     ],
     "correctIndex": 2,
-    "explanation": "Explanation pending — add before the event.",
-    "reference": "FI Navigator credit union industry data.",
+    "explanation": "As per NCUA data, 92 credit unions are above the $5 billion asset size.",
+    "reference": "NCUA data.",
     "status": "draft"
   },
   {
     "id": "q-cu-003",
-    "category": "credit union movement history",
-    "type": "scenario",
-    "difficulty": 1,
-    "prompt": "Placeholder — question to be added.",
+    "category": "credit union industry data",
+    "type": "knowledge",
+    "difficulty": 2,
+    "prompt": "What was the YoY loan growth for credit unions from H1 2025 to H1 2026?",
     "options": [
-      "Placeholder A",
-      "Placeholder B",
-      "Placeholder C",
-      "Placeholder D"
+      "2.1%",
+      "4.9%",
+      "7.6%",
+      "10.3%"
     ],
-    "correctIndex": 0,
-    "explanation": "Placeholder — explanation to be added.",
-    "reference": "",
+    "correctIndex": 1,
+    "explanation": "Loans grew by $82 billion YoY, from $1.68 trillion to $1.76 trillion. That covers all federally insured US credit unions, per NCUA.",
+    "reference": "NCUA data.",
     "status": "draft"
   }
 ]

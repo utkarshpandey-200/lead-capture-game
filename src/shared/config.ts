@@ -27,8 +27,8 @@ function envBool(name: string, fallback: boolean): boolean {
 // Pulled out so questionsPerAttempt (a display-only value — selection itself
 // is driven directly by knowledgeCount/scenarioCount) can be derived from the
 // same numbers rather than configured separately, which can drift out of sync.
-const quizKnowledgeCount = envInt("QUIZ_KNOWLEDGE_COUNT", 2);
-const quizScenarioCount = envInt("QUIZ_SCENARIO_COUNT", 1);
+const quizKnowledgeCount = envInt("QUIZ_KNOWLEDGE_COUNT", 3);
+const quizScenarioCount = envInt("QUIZ_SCENARIO_COUNT", 0);
 
 export const config = {
   // Branding — colors and logo pulled from precisioncuso.org's live design
