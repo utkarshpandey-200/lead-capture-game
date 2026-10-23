@@ -19,8 +19,6 @@ export default function PlayFlow(): JSX.Element {
   const kiosk = searchParams.get("kiosk") === "1";
 
   const [step, setStep] = useState<Step>("loading");
-  const [knownFirstName, setKnownFirstName] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
   const [registerSubmitting, setRegisterSubmitting] = useState(false);
   const [registerError, setRegisterError] = useState<string | null>(null);
   const [attemptId, setAttemptId] = useState<string | null>(null);
@@ -36,13 +34,14 @@ export default function PlayFlow(): JSX.Element {
     setStep("intro");
   }, []);
 
-  // On load: resume an in-progress attempt, otherwise show the intro screen.
+  // On load: resume an in-progress attempt (so a mid-quiz refresh doesn't lose
+  // progress), otherwise show the intro screen. A player is never recognized
+  // across separate games — every "Play" click registers a brand-new entry.
   useEffect(() => {
     (async () => {
       try {
         const me = await quizApi.me();
         if (me.authenticated) {
-          setKnownFirstName(me.firstName);
           const current = await quizApi.currentAttempt();
           if (current.active) {
             setAttemptId(current.attemptId);
@@ -76,14 +75,8 @@ export default function PlayFlow(): JSX.Element {
     }
   }
 
-  async function handlePlayClick() {
-    if (knownFirstName) {
-      setBusy(true);
-      await startAndGoToQuiz(false);
-      setBusy(false);
-    } else {
-      setStep("register");
-    }
+  function handlePlayClick() {
+    setStep("register");
   }
 
   async function handleRegisterSubmit(payload: RegisterPayload) {
@@ -121,7 +114,6 @@ export default function PlayFlow(): JSX.Element {
     } catch {
       // Best-effort; the next player's registration will still create a distinct record.
     }
-    setKnownFirstName(null);
     resetToIntro();
   }
 
@@ -132,7 +124,7 @@ export default function PlayFlow(): JSX.Element {
       return <div className="full-page-loading" aria-busy="true" />;
 
     case "intro":
-      return <IntroScreen onPlay={handlePlayClick} busy={busy} knownFirstName={knownFirstName} />;
+      return <IntroScreen onPlay={handlePlayClick} />;
 
     case "register":
       return (

@@ -1,14 +1,6 @@
 import { useClientConfig } from "../../config/ClientConfigContext";
 
-export default function IntroScreen({
-  onPlay,
-  busy,
-  knownFirstName,
-}: {
-  onPlay: () => void;
-  busy: boolean;
-  knownFirstName: string | null;
-}): JSX.Element {
+export default function IntroScreen({ onPlay }: { onPlay: () => void }): JSX.Element {
   const cfg = useClientConfig();
 
   return (
@@ -29,8 +21,8 @@ export default function IntroScreen({
 
       <div className="spacer" />
 
-      <button className="btn btn-primary" onClick={onPlay} disabled={busy}>
-        {busy ? "Loading…" : knownFirstName ? `Play again, ${knownFirstName}` : "Play"}
+      <button className="btn btn-primary" onClick={onPlay}>
+        Play
       </button>
     </div>
   );
