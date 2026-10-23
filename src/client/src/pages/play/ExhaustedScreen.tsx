@@ -14,7 +14,7 @@ export default function ExhaustedScreen({ onPracticeMode }: { onPracticeMode: ()
           Try practice mode
         </button>
         <a className="btn btn-secondary" href={cfg.links.bookingUrl} target="_blank" rel="noreferrer">
-          Book 15 minutes with our team
+          Book 30 minutes with our team
         </a>
       </div>
     </div>

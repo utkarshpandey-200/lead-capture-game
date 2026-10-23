@@ -75,7 +75,7 @@ export default function ResultScreen({
 
       <div className="cta-row">
         <a className="btn btn-primary" href={cfg.links.bookingUrl} target="_blank" rel="noreferrer">
-          Book 15 minutes with our team
+          Book 30 minutes with our team
         </a>
         {onPlayAgain && (
           <button className="btn btn-ghost" onClick={onPlayAgain}>
