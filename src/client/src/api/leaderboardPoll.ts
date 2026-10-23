@@ -7,9 +7,15 @@ interface FetchResult {
   etag?: string;
 }
 
-async function fetchLeaderboardTop(board: "overall" | "daily", etag: string | undefined): Promise<FetchResult> {
+async function fetchLeaderboardTop(
+  board: "overall" | "daily",
+  date: string | undefined,
+  etag: string | undefined
+): Promise<FetchResult> {
   try {
-    const res = await fetch(`/api/leaderboard/top?board=${board}`, {
+    const qs = new URLSearchParams({ board });
+    if (date) qs.set("date", date);
+    const res = await fetch(`/api/leaderboard/top?${qs.toString()}`, {
       headers: etag ? { "If-None-Match": etag } : {},
     });
     if (res.status === 304) return { status: 304 };
@@ -29,7 +35,8 @@ async function fetchLeaderboardTop(board: "overall" | "daily", etag: string | un
  */
 export function usePolledLeaderboard(
   board: "overall" | "daily",
-  intervalMs: number
+  intervalMs: number,
+  date?: string
 ): { data: PublicLeaderboard | null; stale: boolean } {
   const [data, setData] = useState<PublicLeaderboard | null>(null);
   const [stale, setStale] = useState(false);
@@ -37,9 +44,11 @@ export function usePolledLeaderboard(
 
   useEffect(() => {
     let cancelled = false;
+    etagRef.current = undefined;
+    setData(null);
 
     async function poll() {
-      const result = await fetchLeaderboardTop(board, etagRef.current);
+      const result = await fetchLeaderboardTop(board, date, etagRef.current);
       if (cancelled) return;
       if (result.status === 200) {
         etagRef.current = result.etag;
@@ -57,7 +66,27 @@ export function usePolledLeaderboard(
       cancelled = true;
       clearInterval(id);
     };
-  }, [board, intervalMs]);
+  }, [board, intervalMs, date]);
 
   return { data, stale };
+}
+
+/** Fetches once, on mount: the event days that have at least one ranked play, most recent first. */
+export function useAvailableEventDays(): string[] {
+  const [days, setDays] = useState<string[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/leaderboard/days")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { days: string[] } | null) => {
+        if (!cancelled && data) setDays(data.days);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return days;
 }

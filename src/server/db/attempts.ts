@@ -26,6 +26,16 @@ export function createAttempt(
   return getAttemptById(id)!;
 }
 
+/** Every event day that has at least one ranked (non-practice, finished) attempt, most recent first. */
+export function getRankedEventDays(): string[] {
+  const rows = db
+    .prepare(
+      `SELECT DISTINCT event_day FROM attempts WHERE status = 'finished' AND is_practice = 0 ORDER BY event_day DESC`
+    )
+    .all() as { event_day: string }[];
+  return rows.map((r) => r.event_day);
+}
+
 export function getAttemptById(id: string): AttemptRow | undefined {
   return db.prepare(`SELECT * FROM attempts WHERE id = ?`).get(id) as AttemptRow | undefined;
 }

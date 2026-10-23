@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useClientConfig } from "../../config/ClientConfigContext";
 import { quizApi } from "../../api/quizApi";
 import { ApiError } from "../../api/client";
@@ -26,7 +26,6 @@ export default function QuizScreen({
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [outcome, setOutcome] = useState<AnswerOutcome | null>(null);
   const submittingRef = useRef(false);
-  const dwellTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useBlockBackNavigation(true);
 
@@ -44,14 +43,12 @@ export default function QuizScreen({
         });
         setOutcome(result);
         setPhase("feedback");
-        dwellTimerRef.current = setTimeout(() => advance(result), cfg.quiz.feedbackDwellMs);
       } catch (err) {
         const message = err instanceof ApiError ? err.message : "Connection lost. Please try again.";
         onFatalError(message);
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
-    [attemptId, question, cfg.quiz.feedbackDwellMs]
+    [attemptId, question]
   );
 
   const timer = useQuestionTimer(cfg.quiz.questionTimeLimitMs, question.remainingMs, question.questionId, () => {
@@ -61,7 +58,6 @@ export default function QuizScreen({
   });
 
   async function advance(result: AnswerOutcome) {
-    if (dwellTimerRef.current) clearTimeout(dwellTimerRef.current);
     setPhase("advancing");
     if (result.isLastQuestion && result.result) {
       onFinished(result.result);
@@ -79,12 +75,6 @@ export default function QuizScreen({
       onFatalError(message);
     }
   }
-
-  useEffect(() => {
-    return () => {
-      if (dwellTimerRef.current) clearTimeout(dwellTimerRef.current);
-    };
-  }, []);
 
   function handleOptionClick(index: number) {
     if (phase !== "answering") return;

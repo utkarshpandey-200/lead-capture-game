@@ -1,6 +1,6 @@
 # The AI-in-Lending Speed Quiz
 
-A Kahoot-style, single-player speed quiz built for the Precision CUSO booth at ACU Lending Council 2026. Visitors scan a QR code, register, answer 5 timed multiple-choice questions on AI in lending, and see their rank. A second screen at the booth shows the live top 5.
+A Kahoot-style, single-player speed quiz built for the Precision CUSO booth at ACU Lending Council 2026. Visitors register, answer 3 timed multiple-choice questions on the credit union movement, and see their rank. A second screen at the booth shows the live top 5, filterable by day.
 
 ## Stack
 
@@ -182,7 +182,7 @@ Whatever host you use: **the `data` directory must be on a persistent volume**, 
 
 ## Definition of done checklist
 
-- [x] A new visitor can scan the QR code, register, finish a 5-question round in about a minute, and see their daily and overall rank.
-- [x] `/display` shows the live top 5 and updates within a few seconds of a new score (polling at `DISPLAY_POLL_INTERVAL_MS`, default 3s).
+- [x] A new visitor can register, finish a 3-question round in about a minute, and see their daily and overall rank.
+- [x] `/display` shows the live top 5, filterable by day, and updates within a few seconds of a new score (polling at `DISPLAY_POLL_INTERVAL_MS`, default 3s).
 - [x] Correct answers are never exposed before answering; timing is server-reconciled; the lead CSV exports correctly.
 - [x] Tests pass (`npm test`) and the app runs from a clean clone with the steps above.

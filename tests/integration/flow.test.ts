@@ -3,6 +3,7 @@ import type { FastifyInstance } from "fastify";
 import { buildApp } from "../../src/server/app.js";
 import { getQuestionById } from "../../src/server/db/questions.js";
 import { getAttemptQuestions } from "../../src/server/db/attemptQuestions.js";
+import { db } from "../../src/server/db/index.js";
 import { config } from "../../src/shared/config.js";
 
 // Derived from config rather than hardcoded, so the test suite doesn't
@@ -430,5 +431,61 @@ describe("anonymous registration (email omitted)", () => {
       cookies: { admin_session: adminCookie },
     });
     expect(csv.body).not.toContain("Excluded");
+  });
+});
+
+describe("leaderboard: date filter", () => {
+  it("returns only the requested day's entries, not today's, for a daily board with ?date=", async () => {
+    const { pid } = await registerPlayer("date-filter-today@example.com", {
+      firstName: "TodayPlayer",
+    });
+    const start = await app.inject({
+      method: "POST",
+      url: "/api/attempts/start",
+      cookies: { pid },
+      payload: {},
+    });
+    const attemptId = start.json().attemptId;
+    await playAttemptWithScore(pid, attemptId, TOTAL_QUESTIONS);
+
+    // Backdate this attempt's event_day so it's a distinct, known past day.
+    // (attemptId, not pid, since pid is a signed cookie value, not the raw player id.)
+    const pastDay = "2020-01-02";
+    db.prepare(`UPDATE attempts SET event_day = ? WHERE id = ?`).run(pastDay, attemptId);
+
+    const pastBoard = await app.inject({ method: "GET", url: `/api/leaderboard/top?board=daily&date=${pastDay}` });
+    expect(pastBoard.json().eventDay).toBe(pastDay);
+    expect(pastBoard.json().entries.some((e: { displayName: string }) => e.displayName === "TodayPlayer")).toBe(
+      true
+    );
+
+    const todayBoard = await app.inject({ method: "GET", url: "/api/leaderboard/top?board=daily" });
+    expect(
+      todayBoard.json().entries.some((e: { displayName: string }) => e.displayName === "TodayPlayer")
+    ).toBe(false);
+  });
+
+  it("falls back to today for a malformed date instead of erroring", async () => {
+    const res = await app.inject({ method: "GET", url: "/api/leaderboard/top?board=daily&date=not-a-date" });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().eventDay).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  it("lists days that have at least one ranked attempt, via /api/leaderboard/days", async () => {
+    const { pid } = await registerPlayer("date-filter-days@example.com", { firstName: "DaysPlayer" });
+    const start = await app.inject({
+      method: "POST",
+      url: "/api/attempts/start",
+      cookies: { pid },
+      payload: {},
+    });
+    const attemptId = start.json().attemptId;
+    await playAttemptWithScore(pid, attemptId, TOTAL_QUESTIONS);
+    const pastDay = "2020-01-03";
+    db.prepare(`UPDATE attempts SET event_day = ? WHERE id = ?`).run(pastDay, attemptId);
+
+    const res = await app.inject({ method: "GET", url: "/api/leaderboard/days" });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().days).toContain(pastDay);
   });
 });

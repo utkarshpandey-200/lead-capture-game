@@ -160,7 +160,6 @@ export default function PlayFlow(): JSX.Element {
           onPlayAgain={
             !result.isPractice && result.attemptsUsed < result.maxAttempts ? () => resetToIntro() : null
           }
-          onPracticeMode={!result.isPractice ? () => startAndGoToQuiz(true) : null}
         />
       );
 

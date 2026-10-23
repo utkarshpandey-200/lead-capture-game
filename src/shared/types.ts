@@ -26,6 +26,8 @@ export interface LeaderboardEntry {
 
 export interface PublicLeaderboard {
   board: "overall" | "daily";
+  /** The event day (YYYY-MM-DD) actually served for a "daily" board; omitted for "overall". */
+  eventDay?: string;
   generatedAt: string;
   version: number;
   playerCount: number;

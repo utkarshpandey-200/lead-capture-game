@@ -41,7 +41,8 @@ export function toPublicLeaderboard(
   board: "overall" | "daily",
   ranked: RankedEntry[],
   version: number,
-  topN: number
+  topN: number,
+  eventDay?: string
 ): PublicLeaderboard {
   const top = ranked.slice(0, topN);
   const entries: LeaderboardEntry[] = top.map((entry) => {
@@ -51,6 +52,7 @@ export function toPublicLeaderboard(
   });
   return {
     board,
+    eventDay,
     generatedAt: new Date().toISOString(),
     version,
     playerCount: ranked.length,

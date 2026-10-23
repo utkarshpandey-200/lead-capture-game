@@ -32,24 +32,12 @@ function StandingCard({ label, standing }: { label: string; standing: StandingSu
 export default function ResultScreen({
   result,
   onPlayAgain,
-  onPracticeMode,
 }: {
   result: AttemptResult;
   onPlayAgain: (() => void) | null;
-  onPracticeMode: (() => void) | null;
 }): JSX.Element {
   const cfg = useClientConfig();
   const animatedScore = useCountUp(result.totalScore);
-  const playUrl = cfg.links.playBaseUrl;
-  const shareText = `I scored ${result.totalScore} on the ${cfg.copy.quizTitle} at ACU Lending Council! ${playUrl}`;
-
-  function handleShare() {
-    const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(playUrl)}`;
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(shareText).catch(() => {});
-    }
-    window.open(shareUrl, "_blank", "noopener,noreferrer");
-  }
 
   return (
     <div className="screen">
@@ -67,7 +55,9 @@ export default function ResultScreen({
 
       <div className="stat-grid">
         <div className="stat-card">
-          <div className="value">{result.numCorrect}/5</div>
+          <div className="value">
+            {result.numCorrect}/{cfg.quiz.questionsPerAttempt}
+          </div>
           <div className="label">Correct</div>
         </div>
         <div className="stat-card">
@@ -87,14 +77,6 @@ export default function ResultScreen({
         <a className="btn btn-primary" href={cfg.links.bookingUrl} target="_blank" rel="noreferrer">
           Book 15 minutes with our team
         </a>
-        <button className="btn btn-secondary" onClick={handleShare}>
-          Share on LinkedIn
-        </button>
-        {onPracticeMode && (
-          <button className="btn btn-ghost" onClick={onPracticeMode}>
-            Try practice mode (unranked)
-          </button>
-        )}
         {onPlayAgain && (
           <button className="btn btn-ghost" onClick={onPlayAgain}>
             Play again ({result.maxAttempts - result.attemptsUsed} attempt

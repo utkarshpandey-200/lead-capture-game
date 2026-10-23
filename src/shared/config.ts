@@ -53,7 +53,6 @@ export const config = {
       "INTRO_BODY",
       "Answer 3 quick questions about Credit Union movement. You're scored on accuracy and speed."
     ),
-    boothCta: envStr("BOOTH_CTA", "Scan to play. Top 5 are shown here."),
     consentText: envStr(
       "CONSENT_TEXT",
       "I agree to be contacted by Precision CUSO about this quiz and related information."
@@ -84,7 +83,6 @@ export const config = {
     basePoints: 500,
     speedBonusPoints: 500,
     resultIdleTimeoutMs: envInt("KIOSK_IDLE_TIMEOUT_MS", 45000),
-    feedbackDwellMs: envInt("FEEDBACK_DWELL_MS", 2500),
     clientTimingToleranceMs: envInt("CLIENT_TIMING_TOLERANCE_MS", 3000),
   },
 
@@ -163,7 +161,6 @@ export function getPublicConfig() {
       maxAttempts: config.quiz.maxAttempts,
       maxScorePerQuestion: config.quiz.maxScorePerQuestion,
       resultIdleTimeoutMs: config.quiz.resultIdleTimeoutMs,
-      feedbackDwellMs: config.quiz.feedbackDwellMs,
     },
     display: config.display,
     nicknameBlocklist: config.nicknameBlocklist,
