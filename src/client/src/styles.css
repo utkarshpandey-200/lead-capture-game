@@ -663,7 +663,7 @@ a {
 }
 
 .row-name {
-  font-size: clamp(1.3rem, 2.3vw, 2.2rem);
+  font-size: clamp(1rem, 1.8vw, 1.7rem);
   font-weight: 700;
   overflow: hidden;
   text-overflow: ellipsis;
