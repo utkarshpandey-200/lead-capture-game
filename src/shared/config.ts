@@ -68,7 +68,10 @@ export const config = {
       "PRIVACY_POLICY_URL",
       "https://www.precisioncuso.com/privacy"
     ),
-    bookingUrl: envStr("BOOKING_URL", "https://www.precisioncuso.com/book-a-demo"),
+    bookingUrl: envStr(
+      "BOOKING_URL",
+      "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ1on6Qya4-DTxrA7fu64uLFM6JEUeHQ_pY2rIsXUXdMUJtapL5e5wP6VJaw9L2qCSN9MtRzwTlV"
+    ),
     playBaseUrl: envStr("PLAY_BASE_URL", "https://quiz.precisioncuso.com"),
   },
 
