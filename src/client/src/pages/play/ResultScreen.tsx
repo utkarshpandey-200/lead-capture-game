@@ -47,13 +47,7 @@ function StandingCard({ label, standing }: { label: string; standing: StandingSu
   );
 }
 
-export default function ResultScreen({
-  result,
-  onPlayAgain,
-}: {
-  result: AttemptResult;
-  onPlayAgain: (() => void) | null;
-}): JSX.Element {
+export default function ResultScreen({ result }: { result: AttemptResult }): JSX.Element {
   const cfg = useClientConfig();
   const animatedScore = useCountUp(result.totalScore);
 
@@ -99,12 +93,9 @@ export default function ResultScreen({
         <a className="btn btn-primary" href={cfg.links.bookingUrl} target="_blank" rel="noreferrer">
           Book 30 minutes with our team
         </a>
-        {onPlayAgain && (
-          <button className="btn btn-secondary" onClick={onPlayAgain}>
-            🔁 Play again ({result.maxAttempts - result.attemptsUsed} attempt
-            {result.maxAttempts - result.attemptsUsed === 1 ? "" : "s"} left)
-          </button>
-        )}
+        <a className="btn btn-secondary" href={cfg.links.websiteUrl} target="_blank" rel="noreferrer">
+          🌐 Visit Website
+        </a>
       </div>
     </div>
   );

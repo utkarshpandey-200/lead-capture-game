@@ -73,6 +73,7 @@ export const config = {
       "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ1on6Qya4-DTxrA7fu64uLFM6JEUeHQ_pY2rIsXUXdMUJtapL5e5wP6VJaw9L2qCSN9MtRzwTlV"
     ),
     playBaseUrl: envStr("PLAY_BASE_URL", "https://quiz.precisioncuso.com"),
+    websiteUrl: envStr("WEBSITE_URL", "https://precisioncuso.org"),
   },
 
   // Quiz mechanics

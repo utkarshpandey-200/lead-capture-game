@@ -146,14 +146,7 @@ export default function PlayFlow(): JSX.Element {
 
     case "result":
       if (!result) return <div className="full-page-loading" aria-busy="true" />;
-      return (
-        <ResultScreen
-          result={result}
-          onPlayAgain={
-            !result.isPractice && result.attemptsUsed < result.maxAttempts ? () => resetToIntro() : null
-          }
-        />
-      );
+      return <ResultScreen result={result} />;
 
     case "exhausted":
       return <ExhaustedScreen onPracticeMode={() => startAndGoToQuiz(true)} />;
