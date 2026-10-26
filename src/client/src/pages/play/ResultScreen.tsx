@@ -1,29 +1,47 @@
 import { useClientConfig } from "../../config/ClientConfigContext";
 import { useCountUp } from "../../hooks/useCountUp";
+import ConfettiBurst from "../../components/ConfettiBurst";
 import type { AttemptResult, StandingSummary } from "../../../../shared/types";
+
+function rankMedal(rank: number): string | null {
+  if (rank === 1) return "🥇";
+  if (rank === 2) return "🥈";
+  if (rank === 3) return "🥉";
+  return null;
+}
 
 function StandingCard({ label, standing }: { label: string; standing: StandingSummary }): JSX.Element {
   if (standing.totalPlayers === 0) {
     return (
       <div className="standing-card">
-        <div className="board-name">{label}</div>
-        <div className="sub-line">You're the first to play — rankings will fill in soon.</div>
+        <div>
+          <div className="board-name">{label}</div>
+          <div className="sub-line">You're the first to play — rankings will fill in soon.</div>
+        </div>
       </div>
     );
   }
+  const medal = rankMedal(standing.rank);
   return (
     <div className="standing-card">
-      <div className="board-name">{label}</div>
-      <div className="rank-line">
-        #{standing.rank} of {standing.totalPlayers}
-      </div>
-      <div className="sub-line">
-        Top {standing.topPercent}%
-        {standing.pointGapToFifth != null && standing.pointGapToFifth > 0
-          ? ` · ${standing.pointGapToFifth} points from the top 5`
-          : standing.rank <= 5
-            ? " · You're in the top 5!"
-            : ""}
+      {medal && (
+        <span className="rank-medal" aria-hidden="true">
+          {medal}
+        </span>
+      )}
+      <div>
+        <div className="board-name">{label}</div>
+        <div className="rank-line">
+          #{standing.rank} of {standing.totalPlayers}
+        </div>
+        <div className="sub-line">
+          Top {standing.topPercent}%
+          {standing.pointGapToFifth != null && standing.pointGapToFifth > 0
+            ? ` · ${standing.pointGapToFifth} points from the top 5`
+            : standing.rank <= 5
+              ? " · You're in the top 5!"
+              : ""}
+        </div>
       </div>
     </div>
   );
@@ -41,6 +59,8 @@ export default function ResultScreen({
 
   return (
     <div className="screen">
+      {!result.isPractice && <ConfettiBurst />}
+
       {result.isPractice && (
         <div className="screen-body" style={{ marginBottom: "var(--space-3)" }}>
           Practice round — not added to the leaderboard.
@@ -48,7 +68,9 @@ export default function ResultScreen({
       )}
 
       <p className="result-score-label">Your score</p>
-      <p className="result-score">{animatedScore.toLocaleString()}</p>
+      <div className="result-score-wrap">
+        <p className="result-score">{animatedScore.toLocaleString()}</p>
+      </div>
       <p className="result-score-label" style={{ marginBottom: "var(--space-5)" }}>
         out of {cfg.quiz.questionsPerAttempt * cfg.quiz.maxScorePerQuestion}
       </p>
@@ -78,8 +100,8 @@ export default function ResultScreen({
           Book 30 minutes with our team
         </a>
         {onPlayAgain && (
-          <button className="btn btn-ghost" onClick={onPlayAgain}>
-            Play again ({result.maxAttempts - result.attemptsUsed} attempt
+          <button className="btn btn-secondary" onClick={onPlayAgain}>
+            🔁 Play again ({result.maxAttempts - result.attemptsUsed} attempt
             {result.maxAttempts - result.attemptsUsed === 1 ? "" : "s"} left)
           </button>
         )}

@@ -11,18 +11,21 @@ export default function IntroScreen({ onPlay }: { onPlay: () => void }): JSX.Ele
 
       <div className="spacer" />
 
-      <h1 className="screen-title">{cfg.copy.quizTitle}</h1>
+      <span className="eyebrow-badge">🎮 Live Quiz</span>
+      <h1 className="screen-title hero-title">{cfg.copy.quizTitle}</h1>
       <p className="screen-body">{cfg.copy.introHeadline}</p>
       <p className="screen-body">{cfg.copy.introBody}</p>
-      <p className="screen-body">
-        {cfg.quiz.questionsPerAttempt} questions &middot; {Math.round(cfg.quiz.questionTimeLimitMs / 1000)}s
-        each &middot; scored on accuracy and speed
-      </p>
+
+      <div className="chip-row">
+        <span className="chip">❓ {cfg.quiz.questionsPerAttempt} questions</span>
+        <span className="chip">⏱ {Math.round(cfg.quiz.questionTimeLimitMs / 1000)}s each</span>
+        <span className="chip">🏆 Live leaderboard</span>
+      </div>
 
       <div className="spacer" />
 
-      <button className="btn btn-primary" onClick={onPlay}>
-        Play
+      <button className="btn btn-primary btn-pulse" onClick={onPlay}>
+        Play Now
       </button>
     </div>
   );

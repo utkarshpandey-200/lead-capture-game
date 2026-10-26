@@ -4,6 +4,7 @@ export default function ExhaustedScreen({ onPracticeMode }: { onPracticeMode: ()
   const cfg = useClientConfig();
   return (
     <div className="screen">
+      <span className="eyebrow-badge">🙌 Thanks for playing</span>
       <h1 className="screen-title">You've used your attempts</h1>
       <p className="screen-body">
         You've already played this quiz the maximum number of times. Thanks for playing! You can still try a

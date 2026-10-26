@@ -13,6 +13,7 @@
 import { chromium, type Page } from "playwright";
 import fs from "node:fs";
 import path from "node:path";
+import { config } from "../src/shared/config.js";
 
 const BASE_URL = process.env.BASE_URL ?? "http://localhost:8080";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "dev-admin-pass";
@@ -44,7 +45,8 @@ async function playThroughToResult(page: Page, email: string, prefix: string) {
   await page.waitForSelector(".feedback-panel", { timeout: 10000 });
   await page.screenshot({ path: path.join(OUT_DIR, `${prefix}-4-feedback.png`) });
 
-  for (let i = 0; i < 4; i++) {
+  // The first question is already answered above; this handles the rest.
+  for (let i = 0; i < config.quiz.questionsPerAttempt - 1; i++) {
     await page.click("text=Next");
     await page.waitForSelector(".question-prompt", { timeout: 10000 });
     await page.click(".option-btn");

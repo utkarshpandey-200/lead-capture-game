@@ -90,11 +90,20 @@ export default function QuizScreen({
 
   return (
     <div className="screen">
+      <div className="progress-dots" aria-hidden="true">
+        {Array.from({ length: question.totalQuestions }, (_, i) => {
+          const state = i < question.position ? "done" : i === question.position ? "current" : "upcoming";
+          return <span key={i} className={`progress-dot ${state}`} />;
+        })}
+      </div>
+
       <div className="quiz-header-row">
         <span>
           Question {question.position + 1} of {question.totalQuestions}
         </span>
-        <span className="quiz-score">Score: {question.scoreSoFar}</span>
+        <span className="quiz-score" key={question.scoreSoFar}>
+          ⚡ {question.scoreSoFar}
+        </span>
       </div>
 
       <CountdownBar remainingMs={timer.remainingMs} limitMs={timer.limitMs} />
@@ -106,9 +115,15 @@ export default function QuizScreen({
         {question.options.map((opt, idx) => {
           const letter = String.fromCharCode(65 + idx);
           let className = "option-btn";
+          let resultIcon: string | null = null;
           if (locked && outcome) {
-            if (idx === outcome.correctOptionDisplayIndex) className += " correct";
-            else if (idx === selectedIndex) className += " incorrect chosen-wrong";
+            if (idx === outcome.correctOptionDisplayIndex) {
+              className += " correct";
+              resultIcon = "✓";
+            } else if (idx === selectedIndex) {
+              className += " incorrect chosen-wrong";
+              resultIcon = "✕";
+            }
           }
           return (
             <button
@@ -121,28 +136,39 @@ export default function QuizScreen({
             >
               <span className="option-letter">{letter}</span>
               <span>{opt}</span>
+              {resultIcon && (
+                <span className="option-result-icon" aria-hidden="true">
+                  {resultIcon}
+                </span>
+              )}
             </button>
           );
         })}
       </div>
 
       {outcome && (
-        <div className="feedback-panel" role="status">
+        <div className={`feedback-panel ${outcome.correct ? "correct" : "incorrect"}`} role="status">
           <div className={`feedback-headline ${outcome.correct ? "correct" : "incorrect"}`}>
             {outcome.correct ? (
               <>
-                <span aria-hidden="true">✓</span> Correct
+                <span className="feedback-icon" aria-hidden="true">
+                  ✓
+                </span>
+                Correct!
               </>
             ) : (
               <>
-                <span aria-hidden="true">✕</span> Incorrect
+                <span className="feedback-icon" aria-hidden="true">
+                  ✕
+                </span>
+                Incorrect
               </>
             )}
           </div>
           <div className="feedback-points">+{outcome.pointsEarned} points</div>
           <p className="feedback-explanation">{outcome.explanation}</p>
           <button className="btn btn-secondary" onClick={handleNextClick}>
-            Next
+            Next →
           </button>
         </div>
       )}

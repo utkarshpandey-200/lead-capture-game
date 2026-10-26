@@ -65,6 +65,7 @@ export default function RegisterScreen({
 
   return (
     <div className="screen">
+      <span className="eyebrow-badge">📝 Quick sign-up</span>
       <h1 className="screen-title">Join the quiz</h1>
       <p className="screen-body">Takes about a minute. We'll use this to show your rank and follow up after the event.</p>
 
