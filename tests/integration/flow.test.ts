@@ -415,8 +415,8 @@ describe("anonymous registration (email omitted)", () => {
     ).toBe(true);
   });
 
-  it("is excluded from the CSV lead export (nothing to contact them with)", async () => {
-    await registerWithoutEmail("Excluded", "No Email Export CU");
+  it("still appears in the CSV lead export, with a blank Email column (registration no longer collects email)", async () => {
+    await registerWithoutEmail("Included", "No Email Export CU");
 
     const loginRes = await app.inject({
       method: "POST",
@@ -430,7 +430,7 @@ describe("anonymous registration (email omitted)", () => {
       url: "/api/admin/export.csv",
       cookies: { admin_session: adminCookie },
     });
-    expect(csv.body).not.toContain("Excluded");
+    expect(csv.body).toContain("Included");
   });
 });
 

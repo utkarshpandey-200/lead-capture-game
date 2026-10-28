@@ -9,6 +9,13 @@ function prefersReducedMotion(): boolean {
   return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
+function rankMedal(rank: number): string | null {
+  if (rank === 1) return "🥇";
+  if (rank === 2) return "🥈";
+  if (rank === 3) return "🥉";
+  return null;
+}
+
 /** Top-N rows with a FLIP animation on rank changes and a brief highlight for a genuinely new entrant. */
 export default function LeaderboardRows({ entries }: { entries: LeaderboardEntry[] }): JSX.Element {
   const rowRefs = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -58,6 +65,7 @@ export default function LeaderboardRows({ entries }: { entries: LeaderboardEntry
     <div className="leaderboard-rows">
       {entries.map((entry) => {
         const key = entryKey(entry);
+        const medal = rankMedal(entry.rank);
         return (
           <div
             key={key}
@@ -65,9 +73,9 @@ export default function LeaderboardRows({ entries }: { entries: LeaderboardEntry
               if (el) rowRefs.current.set(key, el);
               else rowRefs.current.delete(key);
             }}
-            className={`leaderboard-row${justEntered.has(key) ? " row-entered" : ""}`}
+            className={`leaderboard-row${medal ? ` row-rank-${entry.rank}` : ""}${justEntered.has(key) ? " row-entered" : ""}`}
           >
-            <span className="row-rank">{entry.rank}</span>
+            <span className="row-rank">{medal ?? entry.rank}</span>
             <span className="row-name">
               {entry.displayName}
               {entry.organization ? <span className="row-org"> · {entry.organization}</span> : null}

@@ -43,6 +43,10 @@ export default function Display(): JSX.Element {
             <img src={cfg.brand.logoPath} alt={cfg.brand.name} />
           </div>
           <h1>{cfg.copy.quizTitle}</h1>
+          <span className="display-live-badge">
+            <span className="display-live-dot" aria-hidden="true" />
+            Live
+          </span>
         </div>
         <div className="display-controls">
           <div className="display-board-label" role="tablist" aria-label="Leaderboard">
@@ -88,12 +92,16 @@ export default function Display(): JSX.Element {
           {active && active.entries.length > 0 ? (
             <LeaderboardRows entries={active.entries} />
           ) : (
-            <div className="display-empty">No scores yet — be the first to play!</div>
+            <div className="display-empty">
+            <span className="display-empty-icon" aria-hidden="true">🎮</span>
+            No scores yet — be the first to play!
+          </div>
           )}
         </div>
 
         <div className="display-side">
           <div className="display-player-count">
+            <span aria-hidden="true">👥</span>{" "}
             {daily.data ? `${daily.data.playerCount} ${daily.data.playerCount === 1 ? "player" : "players"}` : " "}
           </div>
         </div>

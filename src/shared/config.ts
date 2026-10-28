@@ -66,7 +66,7 @@ export const config = {
   links: {
     privacyPolicyUrl: envStr(
       "PRIVACY_POLICY_URL",
-      "https://www.precisioncuso.com/privacy"
+      "https://www.corridorplatforms.com/privacy"
     ),
     bookingUrl: envStr(
       "BOOKING_URL",

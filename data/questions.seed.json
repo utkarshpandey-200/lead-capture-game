@@ -38,7 +38,7 @@
     "category": "credit union industry data",
     "type": "knowledge",
     "difficulty": 2,
-    "prompt": "What was the YoY loan growth for credit unions from H1 2025 to H1 2026?",
+    "prompt": "What was the overall YoY loan growth for credit unions from H1 2025 to H1 2026?",
     "options": [
       "2.1%",
       "4.9%",
@@ -48,6 +48,40 @@
     "correctIndex": 1,
     "explanation": "Loans grew by $82 billion YoY, from $1.68 trillion to $1.76 trillion. That covers all federally insured US credit unions, per NCUA.",
     "reference": "NCUA data.",
+    "status": "draft"
+  },
+  {
+    "id": "q-cu-004",
+    "category": "credit union movement history",
+    "type": "knowledge",
+    "difficulty": 1,
+    "prompt": "In which country were credit unions invented?",
+    "options": [
+      "England",
+      "Germany",
+      "Canada",
+      "United States"
+    ],
+    "correctIndex": 1,
+    "explanation": "They began in the 1850s as cooperatives to protect farmers and small traders from loan sharks.",
+    "reference": "Credit union movement history.",
+    "status": "draft"
+  },
+  {
+    "id": "q-cu-005",
+    "category": "lending terminology",
+    "type": "knowledge",
+    "difficulty": 1,
+    "prompt": "In auto lending, what does LTV stand for?",
+    "options": [
+      "Loan-to-Value",
+      "Lifetime Value",
+      "Let's Trust the Vehicle",
+      "Learn to Value"
+    ],
+    "correctIndex": 0,
+    "explanation": "LTV stands for Loan-to-Value ratio, which is a financial metric used by banks and lenders to express the proportion of a loan amount relative to the appraised value of the asset (such as a vehicle) being used as collateral.",
+    "reference": "Lending terminology.",
     "status": "draft"
   }
 ]

@@ -102,7 +102,7 @@ If the brand kit ever changes, swap the files in `src/client/public/brand/` and 
 
 ## Questions
 
-`data/questions.seed.json` ships with the event's 3 questions (all `knowledge` type, matching `QUIZ_KNOWLEDGE_COUNT=3`/`QUIZ_SCENARIO_COUNT=0`), **all marked `status: "draft"`** — they need a fact-check/approval pass before the event. Only `status: "approved"` questions are served when `ALLOW_DRAFT_QUESTIONS=false` (the production default). Since the bank is exactly as large as one attempt needs, every attempt serves all 3 questions, just shuffled.
+`data/questions.seed.json` ships with a bank of 5 questions (all `knowledge` type), **all marked `status: "draft"`** — they need a fact-check/approval pass before the event. Only `status: "approved"` questions are served when `ALLOW_DRAFT_QUESTIONS=false` (the production default). Each attempt only serves `QUIZ_KNOWLEDGE_COUNT` (default 3) of them — a random subset, in a random order, preferring questions that player hasn't seen on a prior attempt. The bank can grow past 5 any time (via `/admin` → Questions or `npm run seed:questions`) without touching `QUIZ_KNOWLEDGE_COUNT`; attempts just keep drawing a random 3.
 
 To approve questions: log into `/admin` → Questions, review each one, and toggle its status. To bulk-import a revised question set, paste or upload JSON in the same tab (same shape as the seed file; existing ids are updated in place, new ids are added).
 
@@ -117,7 +117,7 @@ The CSV export (`GET /api/admin/export.csv`, or the "Export CSV" button) include
 
 ### Every entry is unique
 
-Registration never looks up or resumes an existing player — even entering the exact same email twice creates two separate player records. There's no "welcome back," no cross-device resume, and the two-attempt cap is per player record, not per person, so it only holds within one browser session (clearing cookies, switching devices, or just registering again all reset it). The public leaderboard and `/display` follow the same rule: every player record gets its own row, even if two entries end up with an identical displayed name and organization. Email is optional and, when provided, is only used for the CSV lead export — never as a lookup key — so a player who leaves it blank just gets excluded from that export (nothing to contact them with).
+Registration never looks up or resumes an existing player — even registering with identical details creates a separate player record each time. There's no "welcome back," no cross-device resume, and the two-attempt cap is per player record, not per person, so it only holds within one browser session (clearing cookies, switching devices, or just registering again all reset it). The public leaderboard and `/display` follow the same rule: every player record gets its own row, even if two entries end up with an identical displayed name and organization. The register screen no longer collects email, so it's blank on every player and the CSV lead export carries name/organization/consent only — nothing to contact leads with beyond that.
 
 ## Backups
 

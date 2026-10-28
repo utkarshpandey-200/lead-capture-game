@@ -841,15 +841,20 @@ a {
 /* --- Display screen (booth monitor, dark, always-on) --- */
 
 .display-page {
-  --display-bg: #0b0f14;
-  --display-surface: #151c24;
-  --display-border: #2a3540;
+  --display-bg: #0a0e14;
+  --display-surface: #141b24;
+  --display-border: #283340;
   --display-text: #f5f7f9;
   --display-text-muted: #93a3b1;
 
   min-height: 100vh;
   width: 100%;
-  background: var(--display-bg);
+  background:
+    radial-gradient(circle at 8% -10%, color-mix(in srgb, var(--brand-secondary) 14%, transparent), transparent 40%),
+    radial-gradient(circle at 102% 4%, color-mix(in srgb, var(--brand-accent) 16%, transparent), transparent 38%),
+    radial-gradient(circle at 50% 125%, color-mix(in srgb, var(--brand-primary) 35%, transparent), transparent 55%),
+    var(--display-bg);
+  background-attachment: fixed;
   color: var(--display-text);
   font-family: var(--font-sans);
   display: flex;
@@ -865,12 +870,55 @@ a {
   flex-wrap: wrap;
   gap: 16px;
   margin-bottom: clamp(24px, 2vw, 40px);
+  animation: fade-slide-up 500ms ease;
 }
 
 .display-brand {
   display: flex;
   align-items: center;
   gap: 20px;
+}
+
+.display-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--brand-accent) 22%, var(--display-surface));
+  border: 1.5px solid color-mix(in srgb, var(--brand-accent) 55%, var(--display-border));
+  color: #d9ffe9;
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.display-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3be081;
+  box-shadow: 0 0 0 0 rgba(59, 224, 129, 0.6);
+  animation: live-pulse 1.8s ease infinite;
+}
+
+@keyframes live-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 224, 129, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(59, 224, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 224, 129, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .display-live-dot {
+    animation: none;
+  }
 }
 
 .display-logo-chip {
@@ -892,6 +940,10 @@ a {
   font-size: clamp(1.6rem, 2.2vw, 2.4rem);
   font-weight: 800;
   margin: 0;
+  background: linear-gradient(135deg, #ffffff, var(--brand-secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .display-controls {
@@ -935,7 +987,8 @@ a {
   font-weight: 700;
   font-size: clamp(0.9rem, 1vw, 1.1rem);
   color: var(--display-text-muted);
-  transition: background var(--transition-med), color var(--transition-med), border-color var(--transition-med);
+  transition: background var(--transition-med), color var(--transition-med), border-color var(--transition-med),
+    transform var(--transition-med), box-shadow var(--transition-med);
 }
 
 .board-pill:hover {
@@ -949,9 +1002,11 @@ a {
 }
 
 .board-pill.active {
-  background: var(--brand-secondary);
-  border-color: var(--brand-secondary);
-  color: #1a1400;
+  background: linear-gradient(135deg, var(--brand-secondary), color-mix(in srgb, var(--brand-secondary) 70%, #ffb000));
+  border-color: transparent;
+  color: #241700;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md), 0 0 0 3px color-mix(in srgb, var(--brand-secondary) 25%, transparent);
 }
 
 .display-body {
@@ -963,13 +1018,14 @@ a {
 }
 
 .display-leaderboard {
-  background: var(--display-surface);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--display-surface) 92%, white 4%), var(--display-surface));
   border: 1px solid var(--display-border);
   border-radius: 24px;
   padding: clamp(16px, 2vw, 32px);
   display: flex;
   flex-direction: column;
   justify-content: center;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
 }
 
 .leaderboard-rows {
@@ -987,6 +1043,21 @@ a {
   background: var(--display-bg);
   border-radius: 16px;
   border: 1px solid var(--display-border);
+  transition: border-color var(--transition-med), background var(--transition-med), box-shadow var(--transition-med);
+}
+
+.leaderboard-row.row-rank-1 {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--brand-secondary) 18%, var(--display-bg)), var(--display-bg));
+  border-color: color-mix(in srgb, var(--brand-secondary) 65%, var(--display-border));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--brand-secondary) 35%, transparent), var(--shadow-md);
+}
+
+.leaderboard-row.row-rank-2 {
+  border-color: color-mix(in srgb, #c7d2de 50%, var(--display-border));
+}
+
+.leaderboard-row.row-rank-3 {
+  border-color: color-mix(in srgb, #d3914f 50%, var(--display-border));
 }
 
 .row-rank {
@@ -1021,10 +1092,15 @@ a {
 
 @keyframes row-flash {
   0% {
+    transform: scale(0.96);
     background: color-mix(in srgb, var(--brand-secondary) 55%, var(--display-bg));
     border-color: var(--brand-secondary);
   }
+  40% {
+    transform: scale(1.01);
+  }
   100% {
+    transform: scale(1);
     background: var(--display-bg);
     border-color: var(--display-border);
   }
@@ -1041,6 +1117,13 @@ a {
   font-size: 1.6rem;
   color: var(--display-text-muted);
   padding: 48px;
+  animation: fade-slide-up 500ms ease;
+}
+
+.display-empty-icon {
+  display: block;
+  font-size: 2.6rem;
+  margin-bottom: var(--space-3);
 }
 
 .display-side {
@@ -1053,11 +1136,13 @@ a {
   text-align: center;
   font-size: clamp(1rem, 1.2vw, 1.3rem);
   font-weight: 700;
-  color: var(--display-text-muted);
-  background: var(--display-surface);
+  color: var(--display-text);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--brand-primary) 45%, var(--display-surface)), var(--display-surface));
   border: 1px solid var(--display-border);
   border-radius: 16px;
   padding: 16px;
+  box-shadow: var(--shadow-sm);
+  animation: fade-slide-up 500ms ease;
 }
 
 .display-footer {
@@ -1312,4 +1397,34 @@ a {
   height: 1px;
   overflow: hidden;
   clip: rect(0 0 0 0);
+}
+
+/* --- Play flow (intro/register/quiz/result/exhausted): laptop / desktop ---
+   Below this width, .screen keeps its mobile layout: full-bleed, top-aligned,
+   min-height: 100vh (its default rule above). At this width and up it becomes
+   a centered card instead of a narrow column pinned to the top-left of a wide
+   viewport. Scoped to #root's .screen child only, so /display and /admin (which
+   already have their own desktop layouts) are unaffected. */
+@media (min-width: 768px) {
+  #root:has(> .screen) {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .screen {
+    min-height: 0;
+    max-height: calc(100vh - var(--space-6) * 2);
+    overflow-y: auto;
+    width: 100%;
+    max-width: 560px;
+    margin: 0;
+    padding: var(--space-6);
+    background: var(--color-surface);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+  }
 }
