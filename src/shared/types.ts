@@ -1,4 +1,4 @@
-export type QuestionType = "knowledge" | "scenario";
+export type QuestionType = "knowledge" | "scenario" | "bonus";
 export type QuestionStatus = "draft" | "approved";
 
 export interface QuestionSeed {
@@ -118,5 +118,7 @@ export interface AnswerOutcome {
   scoreSoFar: number;
   isLastQuestion: boolean;
   nextPosition: number | null;
+  /** True when the next question (not yet fetched) is the fixed bonus question — lets the client show its own announcement screen before fetching it. */
+  nextIsBonus: boolean;
   result: AttemptResult | null;
 }

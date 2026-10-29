@@ -20,7 +20,7 @@ CREATE INDEX IF NOT EXISTS idx_players_email ON players (email);
 CREATE TABLE IF NOT EXISTS questions (
   id TEXT PRIMARY KEY,
   category TEXT NOT NULL,
-  type TEXT NOT NULL CHECK (type IN ('knowledge', 'scenario')),
+  type TEXT NOT NULL CHECK (type IN ('knowledge', 'scenario', 'bonus')),
   difficulty INTEGER NOT NULL CHECK (difficulty BETWEEN 1 AND 3),
   prompt TEXT NOT NULL,
   options TEXT NOT NULL,

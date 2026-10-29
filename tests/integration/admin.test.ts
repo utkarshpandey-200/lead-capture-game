@@ -5,7 +5,7 @@ import { getQuestionById } from "../../src/server/db/questions.js";
 import { getAttemptQuestions } from "../../src/server/db/attemptQuestions.js";
 import { config } from "../../src/shared/config.js";
 
-const TOTAL_QUESTIONS = config.quiz.knowledgeCount + config.quiz.scenarioCount;
+const TOTAL_QUESTIONS = config.quiz.knowledgeCount + config.quiz.scenarioCount + config.quiz.bonusCount;
 
 function extractCookie(setCookieHeader: string | string[] | undefined, name: string): string {
   const headers = Array.isArray(setCookieHeader) ? setCookieHeader : [setCookieHeader ?? ""];

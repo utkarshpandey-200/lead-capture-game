@@ -25,10 +25,16 @@ function envBool(name: string, fallback: boolean): boolean {
 }
 
 // Pulled out so questionsPerAttempt (a display-only value — selection itself
-// is driven directly by knowledgeCount/scenarioCount) can be derived from the
-// same numbers rather than configured separately, which can drift out of sync.
+// is driven directly by knowledgeCount/scenarioCount/bonusCount) can be derived
+// from the same numbers rather than configured separately, which can drift out
+// of sync.
 const quizKnowledgeCount = envInt("QUIZ_KNOWLEDGE_COUNT", 3);
 const quizScenarioCount = envInt("QUIZ_SCENARIO_COUNT", 0);
+// The bonus question is always the fixed, un-shuffled last question of an
+// attempt (see selectQuestionsForAttempt) rather than drawn randomly like
+// knowledge/scenario — it needs exactly one approved `type: "bonus"` question
+// in the bank.
+const quizBonusCount = envInt("QUIZ_BONUS_COUNT", 1);
 
 export const config = {
   // Branding — colors and logo pulled from precisioncuso.org's live design
@@ -51,7 +57,7 @@ export const config = {
     ),
     introBody: envStr(
       "INTRO_BODY",
-      "Answer 3 quick questions about Credit Union movement. You're scored on accuracy and speed."
+      "Answer 3 quick questions about the Credit Union movement, plus a bonus question for extra points. You're scored on accuracy and speed."
     ),
     consentText: envStr(
       "CONSENT_TEXT",
@@ -80,7 +86,8 @@ export const config = {
   quiz: {
     knowledgeCount: quizKnowledgeCount,
     scenarioCount: quizScenarioCount,
-    questionsPerAttempt: quizKnowledgeCount + quizScenarioCount,
+    bonusCount: quizBonusCount,
+    questionsPerAttempt: quizKnowledgeCount + quizScenarioCount + quizBonusCount,
     questionTimeLimitMs: envInt("QUESTION_TIME_LIMIT_MS", 20000),
     maxAttempts: envInt("MAX_ATTEMPTS", 2),
     maxScorePerQuestion: 1000,

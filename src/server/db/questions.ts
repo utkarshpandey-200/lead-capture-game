@@ -27,7 +27,7 @@ function validateSeed(q: QuestionSeed): void {
   if (q.correctIndex < 0 || q.correctIndex > 3) {
     throw new Error(`Question ${q.id} correctIndex out of range`);
   }
-  if (q.type !== "knowledge" && q.type !== "scenario") {
+  if (q.type !== "knowledge" && q.type !== "scenario" && q.type !== "bonus") {
     throw new Error(`Question ${q.id} has invalid type: ${q.type}`);
   }
   if (q.status !== "draft" && q.status !== "approved") {
@@ -69,7 +69,7 @@ export function loadQuestionsFromSeedFile(filePath: string): { count: number } {
 export interface QuestionRow {
   id: string;
   category: string;
-  type: "knowledge" | "scenario";
+  type: "knowledge" | "scenario" | "bonus";
   difficulty: number;
   prompt: string;
   options: string[];

@@ -8,7 +8,7 @@ import { config } from "../../src/shared/config.js";
 
 // Derived from config rather than hardcoded, so the test suite doesn't
 // silently drift out of sync with the configured question count/limit.
-const TOTAL_QUESTIONS = config.quiz.knowledgeCount + config.quiz.scenarioCount;
+const TOTAL_QUESTIONS = config.quiz.knowledgeCount + config.quiz.scenarioCount + config.quiz.bonusCount;
 const MAX_SCORE = TOTAL_QUESTIONS * config.quiz.maxScorePerQuestion;
 
 function extractCookie(setCookieHeader: string | string[] | undefined, name: string): string {

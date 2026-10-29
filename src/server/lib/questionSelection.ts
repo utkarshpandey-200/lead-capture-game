@@ -21,20 +21,27 @@ function pickForType(pool: QuestionRow[], seenIds: Set<string>, count: number): 
 }
 
 /**
- * Selects `knowledgeCount` + `scenarioCount` questions for one attempt,
- * preferring questions the player hasn't been served before (across any
- * attempt), falling back to repeats only if the pool is too small.
- * The final order is shuffled.
+ * Selects `knowledgeCount` + `scenarioCount` + `bonusCount` questions for one
+ * attempt, preferring questions the player hasn't been served before (across
+ * any attempt), falling back to repeats only if the pool is too small.
+ * Knowledge/scenario questions are shuffled together; bonus questions are
+ * always appended after, in their own stable order, never mixed into the
+ * shuffle — with exactly one `type: "bonus"` question in the pool (the usual
+ * case), this always surfaces as the same fixed last question of the attempt.
  */
 export function selectQuestionsForAttempt(
   pool: QuestionRow[],
   seenIds: Set<string>,
   knowledgeCount: number,
-  scenarioCount: number
+  scenarioCount: number,
+  bonusCount: number
 ): QuestionRow[] {
   const knowledgePool = pool.filter((q) => q.type === "knowledge");
   const scenarioPool = pool.filter((q) => q.type === "scenario");
+  const bonusPool = pool.filter((q) => q.type === "bonus");
   const knowledge = pickForType(knowledgePool, seenIds, knowledgeCount);
   const scenario = pickForType(scenarioPool, seenIds, scenarioCount);
-  return shuffle([...knowledge, ...scenario]);
+  const randomized = shuffle([...knowledge, ...scenario]);
+  const bonus = bonusCount > 0 ? pickForType(bonusPool, seenIds, bonusCount) : [];
+  return [...randomized, ...bonus];
 }

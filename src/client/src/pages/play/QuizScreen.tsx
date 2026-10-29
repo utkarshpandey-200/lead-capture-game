@@ -5,9 +5,10 @@ import { ApiError } from "../../api/client";
 import { useBlockBackNavigation } from "../../hooks/useBlockBackNavigation";
 import { useQuestionTimer } from "../../hooks/useQuestionTimer";
 import CountdownBar from "../../components/CountdownBar";
+import BonusIntro from "./BonusIntro";
 import type { AnswerOutcome, AttemptResult, QuestionForClient } from "../../../../shared/types";
 
-type Phase = "answering" | "feedback" | "advancing";
+type Phase = "answering" | "feedback" | "advancing" | "bonus-intro";
 
 export default function QuizScreen({
   attemptId,
@@ -57,12 +58,8 @@ export default function QuizScreen({
     }
   });
 
-  async function advance(result: AnswerOutcome) {
+  async function fetchNextQuestion() {
     setPhase("advancing");
-    if (result.isLastQuestion && result.result) {
-      onFinished(result.result);
-      return;
-    }
     try {
       const next = await quizApi.getQuestion(attemptId);
       setQuestion(next);
@@ -76,6 +73,21 @@ export default function QuizScreen({
     }
   }
 
+  function advance(result: AnswerOutcome) {
+    if (result.isLastQuestion && result.result) {
+      onFinished(result.result);
+      return;
+    }
+    if (result.nextIsBonus) {
+      // Show the bonus announcement first; it fetches the question itself
+      // (via fetchNextQuestion) once it's done, so the server doesn't start
+      // that question's clock until the player is actually looking at it.
+      setPhase("bonus-intro");
+      return;
+    }
+    void fetchNextQuestion();
+  }
+
   function handleOptionClick(index: number) {
     if (phase !== "answering") return;
     void submit(index, timer.getElapsedMs());
@@ -87,6 +99,14 @@ export default function QuizScreen({
   }
 
   const locked = phase !== "answering";
+
+  if (phase === "bonus-intro") {
+    return (
+      <div className="screen">
+        <BonusIntro onDone={() => void fetchNextQuestion()} />
+      </div>
+    );
+  }
 
   return (
     <div className="screen">
@@ -108,7 +128,9 @@ export default function QuizScreen({
 
       <CountdownBar remainingMs={timer.remainingMs} limitMs={timer.limitMs} />
 
-      <div className="question-category">{question.type === "scenario" ? "Scenario" : "Knowledge"}</div>
+      <div className={`question-category${question.type === "bonus" ? " question-category-bonus" : ""}`}>
+        {question.type === "bonus" ? "🎁 Bonus Question" : question.type === "scenario" ? "Scenario" : "Knowledge"}
+      </div>
       <h2 className="question-prompt">{question.prompt}</h2>
 
       <div className="options-list" role="group" aria-label="Answer options">

@@ -83,5 +83,22 @@
     "explanation": "LTV stands for Loan-to-Value ratio, which is a financial metric used by banks and lenders to express the proportion of a loan amount relative to the appraised value of the asset (such as a vehicle) being used as collateral.",
     "reference": "Lending terminology.",
     "status": "draft"
+  },
+  {
+    "id": "q-cu-bonus-001",
+    "category": "precision cuso value proposition",
+    "type": "bonus",
+    "difficulty": 2,
+    "prompt": "Your vendor reviews your credit strategy once a quarter. How many weeks of lending decisions happen between reviews?",
+    "options": [
+      "4",
+      "13",
+      "25",
+      "52, because the review keeps getting rescheduled"
+    ],
+    "correctIndex": 1,
+    "explanation": "52 weeks / 4 quarters = 13. That's 13 weeks where scores need to become strategy, rules need testing, and someone has to do the work. That's the gap Precision CUSO fills: in-house capability without in-house talent, working with your team every week.",
+    "reference": "Precision CUSO value proposition.",
+    "status": "draft"
   }
 ]

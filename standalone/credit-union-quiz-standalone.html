@@ -179,6 +179,65 @@
     display: inline-flex; padding: 4px 12px; border-radius: 999px; background: color-mix(in srgb, var(--brand-primary) 8%, var(--color-surface));
     font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--brand-primary); font-weight: 800; margin-bottom: var(--space-3);
   }
+  .question-category-bonus {
+    background: linear-gradient(135deg, var(--brand-secondary), color-mix(in srgb, var(--brand-secondary) 70%, #ffb000));
+    color: #2b1900; animation: pop-in 320ms ease;
+  }
+
+  .bonus-intro {
+    position: relative; flex: 1; min-height: 420px; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; text-align: center; gap: var(--space-2); padding: var(--space-6) var(--space-4);
+    margin: calc(var(--space-5) * -1) calc(var(--space-4) * -1) calc(var(--space-7) * -1);
+    border-radius: var(--radius-md); overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--brand-secondary) 55%, transparent), transparent 60%),
+      radial-gradient(circle at 15% 90%, color-mix(in srgb, var(--brand-accent) 22%, transparent), transparent 55%),
+      radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--brand-primary) 28%, transparent), transparent 55%),
+      var(--color-surface);
+  }
+  .bonus-intro-ring {
+    position: absolute; top: 50%; left: 50%; width: 130px; height: 130px; margin: -65px 0 0 -65px;
+    border-radius: 50%; border: 3px solid color-mix(in srgb, var(--brand-secondary) 70%, transparent);
+    animation: bonus-ring-pulse 2.2s ease-out infinite;
+  }
+  .bonus-intro-ring-2 { animation-delay: 1.1s; }
+  @keyframes bonus-ring-pulse {
+    0% { transform: scale(0.5); opacity: 0.9; }
+    100% { transform: scale(2.6); opacity: 0; }
+  }
+  .bonus-intro-icon {
+    position: relative; font-size: 4.2rem; line-height: 1;
+    animation: bonus-icon-pop 700ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    filter: drop-shadow(0 10px 18px rgba(7, 37, 89, 0.25));
+  }
+  @keyframes bonus-icon-pop {
+    0% { transform: scale(0) rotate(-25deg); opacity: 0; }
+    60% { transform: scale(1.25) rotate(8deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+  .bonus-intro-title {
+    position: relative; margin: var(--space-2) 0 0; font-size: 2.1rem; font-weight: 900; letter-spacing: 0.01em;
+    background: linear-gradient(110deg, var(--brand-primary) 20%, color-mix(in srgb, var(--brand-secondary) 85%, #ffdd88) 45%, var(--brand-primary) 70%);
+    background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: bonus-text-in 500ms ease 150ms both, bonus-shine 2.4s linear 650ms infinite;
+  }
+  @keyframes bonus-text-in {
+    0% { transform: translateY(12px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes bonus-shine {
+    0% { background-position: 200% 0; }
+    100% { background-position: -40% 0; }
+  }
+  .bonus-intro-subtitle {
+    position: relative; margin: 0; font-weight: 700; color: var(--color-text-muted);
+    animation: fade-slide-up 500ms ease 350ms both;
+  }
+  .bonus-intro-btn { position: relative; margin-top: var(--space-4); animation: fade-slide-up 500ms ease 550ms both; }
+  @media (prefers-reduced-motion: reduce) {
+    .bonus-intro-ring, .bonus-intro-icon, .bonus-intro-title, .bonus-intro-subtitle, .bonus-intro-btn { animation: none !important; }
+  }
+
   .question-prompt { font-size: 1.35rem; font-weight: 800; line-height: 1.35; margin: 0 0 var(--space-5); color: var(--brand-primary); }
   .options-list { display: flex; flex-direction: column; gap: var(--space-3); }
   .option-btn {
@@ -327,7 +386,19 @@
     }
   ];
 
+  // Always the fixed, un-shuffled last question of the quiz — kept separate
+  // from QUESTIONS so it's never drawn into the random pool.
+  var BONUS_QUESTION = {
+    category: "🎁 Bonus Question",
+    isBonus: true,
+    prompt: "Your vendor reviews your credit strategy once a quarter. How many weeks of lending decisions happen between reviews?",
+    options: ["4", "13", "25", "52, because the review keeps getting rescheduled"],
+    correctIndex: 1,
+    explanation: "52 weeks / 4 quarters = 13. That's 13 weeks where scores need to become strategy, rules need testing, and someone has to do the work. That's the gap Precision CUSO fills: in-house capability without in-house talent, working with your team every week."
+  };
+
   var KNOWLEDGE_COUNT = 3;
+  var TOTAL_QUESTIONS = KNOWLEDGE_COUNT + 1;
 
   function shuffle(items) {
     var arr = items.slice();
@@ -391,6 +462,7 @@
     if (state.step === "intro") renderIntro();
     else if (state.step === "register") renderRegister();
     else if (state.step === "quiz") renderQuiz();
+    else if (state.step === "bonus-intro") renderBonusIntro();
     else if (state.step === "result") renderResult();
   }
 
@@ -402,9 +474,9 @@
         '<span class="eyebrow-badge">🎮 LIVE QUIZ</span>' +
         '<h1 class="screen-title hero-title">Credit Union Quiz</h1>' +
         '<p class="screen-body">How fast and how well do you know about the Credit Union movement?</p>' +
-        '<p class="screen-body">Answer 3 quick questions about the Credit Union movement. You’re scored on accuracy and speed.</p>' +
+        '<p class="screen-body">Answer 3 quick questions about the Credit Union movement, plus a bonus question for extra points. You’re scored on accuracy and speed.</p>' +
         '<div class="chip-row">' +
-          '<span class="chip">❓ ' + KNOWLEDGE_COUNT + ' questions</span>' +
+          '<span class="chip">❓ ' + TOTAL_QUESTIONS + ' questions</span>' +
           '<span class="chip">⏱ ' + (CONFIG.limitMs / 1000) + 's each</span>' +
           '<span class="chip">🏆 Live leaderboard</span>' +
         '</div>' +
@@ -483,7 +555,7 @@
 
   function startQuiz() {
     state.step = "quiz";
-    state.questions = shuffle(QUESTIONS).slice(0, KNOWLEDGE_COUNT);
+    state.questions = shuffle(QUESTIONS).slice(0, KNOWLEDGE_COUNT).concat([BONUS_QUESTION]);
     state.current = 0;
     state.score = 0;
     state.numCorrect = 0;
@@ -554,8 +626,45 @@
       render();
       return;
     }
+    var next = state.questions[state.current + 1];
+    if (next && next.isBonus) {
+      // Its own announcement screen, not a badge on the question card — the
+      // actual question (and its timer) only starts once this is dismissed.
+      state.step = "bonus-intro";
+      render();
+      return;
+    }
     state.current += 1;
     beginQuestion();
+  }
+
+  function proceedPastBonusIntro() {
+    state.current += 1;
+    beginQuestion();
+  }
+
+  function renderBonusIntro() {
+    app.innerHTML =
+      '<div class="screen">' +
+        '<div class="bonus-intro" role="status" aria-live="polite">' +
+          '<span class="bonus-intro-ring bonus-intro-ring-1"></span>' +
+          '<span class="bonus-intro-ring bonus-intro-ring-2"></span>' +
+          '<span class="bonus-intro-icon">🎁</span>' +
+          '<h2 class="bonus-intro-title">Bonus Question!</h2>' +
+          '<p class="bonus-intro-subtitle">Final question — make it count.</p>' +
+          '<button type="button" class="btn btn-primary bonus-intro-btn" id="bonusGoBtn">Next →</button>' +
+        '</div>' +
+      '</div>';
+    fireConfetti();
+
+    var fired = false;
+    function fire() {
+      if (fired) return;
+      fired = true;
+      proceedPastBonusIntro();
+    }
+    var btn = document.getElementById("bonusGoBtn");
+    if (btn) btn.addEventListener("click", fire);
   }
 
   function renderQuiz() {
@@ -609,7 +718,7 @@
           '<div class="countdown-track"><div class="countdown-fill" id="countdownFill" style="width:100%"></div></div>' +
           '<span class="countdown-seconds" id="countdownSeconds">' + (CONFIG.limitMs / 1000) + 's</span>' +
         '</div>' +
-        '<div class="question-category">' + q.category + '</div>' +
+        '<div class="question-category' + (q.isBonus ? ' question-category-bonus' : '') + '">' + q.category + '</div>' +
         '<h2 class="question-prompt">' + escapeHtml(q.prompt) + '</h2>' +
         '<div class="options-list">' + optionsHtml + '</div>' +
         feedbackHtml +

@@ -20,7 +20,7 @@ export interface AdminPlayerRow {
 export interface AdminQuestionRow {
   id: string;
   category: string;
-  type: "knowledge" | "scenario";
+  type: "knowledge" | "scenario" | "bonus";
   difficulty: number;
   prompt: string;
   options: string[];

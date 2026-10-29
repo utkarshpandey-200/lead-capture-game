@@ -105,7 +105,8 @@ export function startAttempt(playerId: string, practice: boolean): AttemptRow {
     pool,
     seenIds,
     config.quiz.knowledgeCount,
-    config.quiz.scenarioCount
+    config.quiz.scenarioCount,
+    config.quiz.bonusCount
   );
 
   const attemptId = newId();
@@ -239,6 +240,13 @@ export function submitAnswer(attemptId: string, playerId: string, input: AnswerI
   const scoreSoFar = answeredSoFar.reduce((sum, q) => sum + (q.points ?? 0), 0);
   const isLastQuestion = answeredSoFar.length === allQuestions.length;
 
+  let nextIsBonus = false;
+  if (!isLastQuestion) {
+    const nextAq = allQuestions.find((q) => q.position === current.position + 1);
+    const nextQuestion = nextAq ? getQuestionById(nextAq.question_id) : undefined;
+    nextIsBonus = nextQuestion?.type === "bonus";
+  }
+
   let result: AttemptResult | null = null;
 
   if (isLastQuestion) {
@@ -258,6 +266,7 @@ export function submitAnswer(attemptId: string, playerId: string, input: AnswerI
     scoreSoFar,
     isLastQuestion,
     nextPosition: isLastQuestion ? null : current.position + 1,
+    nextIsBonus,
     result,
   };
 }
